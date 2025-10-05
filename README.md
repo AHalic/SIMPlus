@@ -1,5 +1,6 @@
-# Inventory Management app
-App developed for the Software Engineering class
+# SIM+
+The System for Inventory Management help stores of any size manage their stock and sales.
+App developed for the Software Engineering class.
 
 Group: Sophie Dilhon, Hazem Zidan, Jack Taormino, Tochukwu Okwudiri, Tony Bogonko
 
