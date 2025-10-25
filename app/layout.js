@@ -18,10 +18,8 @@ export default function RootLayout({ children }) {
 		<html lang="en">
 			<body className={`${roboto.className}`}>
 				<Provider>
-					<Grid container >
-						<Header />
-						{children}
-					</Grid>
+					<Header />
+					{children}
 				</Provider>
 			</body>
 		</html>
