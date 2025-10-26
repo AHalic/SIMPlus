@@ -3,15 +3,18 @@
 import { ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
 import { getTheme } from "../style/palette";
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 
 const Provider = ({ 
   children 
 }) => {
   return (
-        <ThemeProvider theme={getTheme()}>
-            <CssBaseline />
-            {children}
-        </ThemeProvider>
+    <AppRouterCacheProvider>
+      <ThemeProvider theme={getTheme()}>
+          <CssBaseline />
+          {children}
+      </ThemeProvider>
+    </AppRouterCacheProvider>
   );
 };
 
