@@ -5,7 +5,7 @@ const getPalette = () => {
   return createTheme({
     palette: {
         primary: {
-            main: "#0D1221",
+            main: "#13294D",
         },
         secondary: {
             main: "#FFFFFF",
@@ -15,7 +15,7 @@ const getPalette = () => {
             default: "#F0F4F8",
         },
         text: {
-            primary: "#0D1221",
+            primary: "#13294D",
             secondary: "#5D5D6F",
         },
     }
