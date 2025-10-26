@@ -1,5 +1,3 @@
-import Header from "@/components/Header";
-import { Grid } from "@mui/material";
 import { Roboto } from "next/font/google";
 import Provider from "./providers";
 
@@ -18,7 +16,6 @@ export default function RootLayout({ children }) {
 		<html lang="en">
 			<body className={`${roboto.className}`}>
 				<Provider>
-					<Header />
 					{children}
 				</Provider>
 			</body>
