@@ -10,7 +10,8 @@ async function seed() {
     { dept_name: "Health" },
     { dept_name: "Clothing" },
     { dept_name: "Food" },
-    { dept_name: "Home Goods" }
+    { dept_name: "Home Goods" },
+    { dept_name: "Education" }
   ];
 
   // Insert data
