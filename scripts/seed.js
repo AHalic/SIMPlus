@@ -9,7 +9,8 @@ async function seed() {
   const testData = [
     { dept_name: "Health" },
     { dept_name: "Clothing" },
-    { dept_name: "Food" }
+    { dept_name: "Food" },
+    { dept_name: "Home Goods" }
   ];
 
   // Insert data
