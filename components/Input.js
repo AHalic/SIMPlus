@@ -1,4 +1,4 @@
-import { FormControl, Input, InputLabel, TextField, Typography } from "@mui/material";
+import { FormControl, TextField, Typography } from "@mui/material";
 
 export default function CustomInput({label, ...props}) {
 

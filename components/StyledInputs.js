@@ -9,12 +9,14 @@ const SelectInput = styled(OutlinedInput)(({ theme }) => ({
     },
 
     '& .MuiOutlinedInput-notchedOutline': {
+        borderRadius: '12px',
         border: `2px solid ${theme.palette.background?.default}`,
     },
 
     '& .MuiOutlinedInput-input': {
         padding: '6px 16px!important',
         backgroundColor: theme.palette.background?.default,
+        borderRadius: '12px',
         fontSize: '0.8rem',
         color: theme.palette.text?.primary,
         
@@ -23,17 +25,20 @@ const SelectInput = styled(OutlinedInput)(({ theme }) => ({
     },
     
     '&.MuiOutlinedInput-root': {
+        backgroundColor: theme.palette.background?.default,
+        borderRadius: '12px',
         '&:hover fieldset': {
-          border: `2px solid ${theme.palette.secondary.main}`,
+          border: `2px solid ${theme.palette.background?.default}`,
+
         },
         '&.Mui-focused fieldset': {
-          border: `2px solid ${theme.palette.secondary.main}`,
+          border: `2px solid ${theme.palette.background?.default}`,
         },
         '&.Mui-error fieldset': {
           border: `2px solid ${theme.palette.error.main}`,
         },
     },
-  }));  
+}));  
 
 
 const StyledSelect = ({ label, options, helperText, error, ...props }) => {
@@ -81,4 +86,39 @@ const StyledSelect = ({ label, options, helperText, error, ...props }) => {
 }
 
 
-export default StyledSelect;
+const StyledInput = ({ label, value, helperText, error, ...props }) => {
+    return (
+        <FormControl variant="outlined" fullWidth error={error}>
+            <InputLabel
+                variant="outlined"
+                id={`input-${label}-label`}
+                sx={{
+                    transform: 'translate(14px, 10px) scale(1)',
+                    '&.MuiInputLabel-shrink': {
+                        transform: 'translate(14px, -9px) scale(0.75)',
+                    },
+                }}
+            >
+                {label}
+            </InputLabel>
+
+            <SelectInput
+                fullWidth
+                variant="outlined"
+                sx={{                     
+                    '& .MuiOutlinedInput-input': {
+                        padding: '8px 16px!important',
+                    }    
+                }}
+                id={`input-${label}`}
+                name={`input-${label}`}
+                label={label}
+                value={value}
+                {...props}
+            />
+        </FormControl>
+    )
+}
+
+
+export { StyledInput, StyledSelect };
