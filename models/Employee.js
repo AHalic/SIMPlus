@@ -4,22 +4,15 @@ import bcrypt from "bcrypt"
 SALT_WORK_FACTOR = 10;
 
 const Employee = new mongoose.Schema({
-        emp_id: { type: int, required: true, index: { unique: true } },
-        dept_id: { type: int, required: true },
+        dept_id: { type: mongoose.Schema.Types.ObjectId, ref: "Department", required: true },
         first_name: { type: String, required: true },
         last_name: { type: String, required: true },
-        role: { type: Role, required: true },
+        role: { type: String, enum: ["Manager", "Associate"], required: true },
         email: { type: String, required: true },
         password_hash: { type: String, required: true }
     },
     { timestamps: true }
 );
-
-const Role = {
-    Manager: "Manager",
-    Associate: "Associate"
-}
-
 
 Employee.pre(save, function(next) {
     var employee = this;
@@ -52,5 +45,4 @@ Employee.methods.comparePassword = function(candidatePassword, cb) {
 };
 
 
-export default mongoose.models.Employee || mongoose.model("Employee", Employee)
-export { Role }
+export default mongoose.models.Employee || mongoose.model("Employee", Employee, "Employee");
