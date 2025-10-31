@@ -68,7 +68,7 @@ export default function Home() {
 						options={[
 							{value: "", label: "All"},
 							...departments?.map((i) => (
-								{value: i.dept_id, label: i.dept_name}
+								{value: i._id, label: i.dept_name}
 							))
 						]
 						}
