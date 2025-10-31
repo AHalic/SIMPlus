@@ -36,14 +36,35 @@ export default function MenuDrawer({isOpenState}) {
                     Menu
                 </Typography>
 
+                {/* List Functions*/}
+                <Divider />
+                
+                <Link href="/users/new"  passHref style={{ textDecoration: 'none' }}>
+                    {/* TODO: remove after manage page is ready */}
+                    <ListButton
+                        onClick={() => setIsMenuOpen(false)}
+                        text="Add Employee"
+                    />
+                </Link>
+
                 <Divider />
 
-                {/* List Functions*/}
+                <Link href="/profile"  passHref style={{ textDecoration: 'none' }}>
+                    <ListButton
+                        onClick={() => setIsMenuOpen(false)}
+                        disabled
+                        text="Profile"
+                    />
+                </Link>
+
+                <Divider />
+
                 <Link href="/users"  passHref style={{ textDecoration: 'none' }}>
                     {/* TODO: only for managers */}
                     <ListButton
+                        disabled
                         onClick={() => setIsMenuOpen(false)}
-                        text="Manage Users"
+                        text="Manage Employees"
                     />
                 </Link>
 

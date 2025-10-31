@@ -1,11 +1,13 @@
 
 import { ListItem, ListItemButton, ListItemIcon, ListItemText, Typography } from "@mui/material";
 
-export default function ListButton({ icon, text, onClick }) {
+export default function ListButton({ icon, text, onClick, disabled=false }) {
     return (
         <ListItem disableGutters>
-            <ListItemButton onClick={onClick}
+            <ListItemButton 
+                onClick={onClick}
                 alignItems="center"
+                disabled={disabled}
             >
 
                 <ListItemText
