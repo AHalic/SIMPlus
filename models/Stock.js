@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
 
 const Stock = new mongoose.Schema({
-        item_id: { type: int, required: true },
+        item_id: { type: mongoose.Schema.Types.ObjectId, ref: "Item", required: true },
         amount: { type: Number, required: true }
     },
     { timestamps: true }
 );
 
-export default mongoose.models.Stock || mongoose.model("Stock", Stock);
+export default mongoose.models.Stock || mongoose.model("Stock", Stock, "Stock");
