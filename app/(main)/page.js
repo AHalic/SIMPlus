@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 
 export default function Home() {
 	const [departments, setDepartments] = useState([])
-	const [filterSelected, setFilterSelected] = useState({department: "", id: ""})
+	const [filterSelected, setFilterSelected] = useState({dept_id: "", id: ""})
 	const [stock, setStock] = useState([])
 	const [loadingStock, setLoadingStock] = useState(true)
 
@@ -73,9 +73,9 @@ export default function Home() {
 						]
 						}
 						onChange={(e) => {
-							setFilterSelected(prev => ({...prev, department: e.target.value}))}
+							setFilterSelected(prev => ({...prev, dept_id: e.target.value}))}
 						}
-						value={filterSelected.department}
+						value={filterSelected.dept_id}
 					/>
 				</Grid>
 

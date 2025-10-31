@@ -90,11 +90,18 @@ export async function GET(request) {
             });
         }
 
+        const { searchParams } = new URL(request.url);
+        const deptIdParam = searchParams.get("dept_id");
+
         const departments = await Department.find({}, "_id dept_name");
         const items = await Item.find({}, "_id item_name cost color size type");
         const stockitems = await Stock.find({}, "item_id dept_id amount");
 
-        const stock = departments.map(dept => {
+        const filteredDepartments = deptIdParam
+            ? departments.filter(dept => dept._id.toString() === deptIdParam)
+            : departments;
+
+        const stock = filteredDepartments.map(dept => {
             const deptStocks = stockitems.filter(stock => stock.dept_id.toString() === dept._id.toString());
             const deptItems = deptStocks.map(stockEntry => {
                 const item = items.find(i => i._id.toString() === stockEntry.item_id.toString());
@@ -115,7 +122,7 @@ export async function GET(request) {
             };
         });
         return NextResponse.json({ stock }, {
-            status: 201,
+            status: 200,
             headers: { 'Content-Type': 'application/json' }
         });
     } catch (error) {
