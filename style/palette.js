@@ -18,6 +18,9 @@ const getPalette = () => {
             primary: "#13294D",
             secondary: "#5D5D6F",
         },
+        success: {
+          main: "#4CBC5D"
+        }
     }
   }
 )}

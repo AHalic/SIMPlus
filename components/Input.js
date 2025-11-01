@@ -1,6 +1,6 @@
 import { FormControl, TextField, Typography } from "@mui/material";
 
-export default function CustomInput({label, ...props}) {
+export default function CustomInput({label, lightLabel=false, ...props}) {
 
     return (
         <FormControl fullWidth 
@@ -10,7 +10,7 @@ export default function CustomInput({label, ...props}) {
                 }
             }}
         >
-            <Typography fontWeight={600}>
+            <Typography sx={{ color: lightLabel ? 'text.secondary' : 'text.primary' }} fontWeight={lightLabel ? 400 : 600}>
                 {label}
             </Typography>
 
