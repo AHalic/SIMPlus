@@ -31,8 +31,8 @@ export default function Header () {
                         style={{cursor: 'pointer'}}
                         unselectable="on" 
                         src={`/icon.svg`}
-                        height={60}
-                        width={60}
+                        height={40}
+                        width={40}
                         alt="logo"
                     />
                 </Link>
