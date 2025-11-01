@@ -5,75 +5,6 @@ import Item from "../../../models/Item.js";
 import mongoose from "mongoose";
 import "dotenv/config";
 
-/** 
- * Mock promise to get data
- * */ 
-const mock = async () => {
-
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            const success = true; 
-    
-            if (success) {
-                resolve(
-                    {
-                        stock: [
-                            // stock per department
-                            {
-                                dept_id: 1,
-                                dept_name: "Home",
-                                items: [
-                                    {
-                                        item_id: 1,
-                                        item_name: "Frame",
-                                        cost: 34,
-                                        color: "pink",
-                                        size: null,
-                                        type: null,
-                                        amount: 5, // in stock
-                                        sold_this_week: 2,
-                                        sold_total: 5
-                                    },
-                                    {
-                                        item_id: 2,
-                                        item_name: "Plate",
-                                        cost: 14,
-                                        color: "white",
-                                        size: null,
-                                        type: null,
-                                        amount: 2, // in stock
-                                        sold_this_week: 2,
-                                        sold_total: 5
-                                    },
-                                ]
-                            },
-                            {
-                                dept_id: 2,
-                                dept_name: "Clothing",
-                                items: [
-                                    {
-                                        item_id: 3,
-                                        item_name: "T-Shirt",
-                                        cost: 6,
-                                        color: "black",
-                                        size: "S",
-                                        type: "tops",
-                                        amount: 5, // in stock
-                                        sold_this_week: 2,
-                                        sold_total: 5
-                                    },
-                                ]
-                            },
-                        ]
-                    }
-                );
-            } else {
-                reject("Error: Failed to fetch data."); 
-            }
-        }, 500); 
-    });
-}
-
 
 /**
  * Stock GET route 
@@ -90,37 +21,48 @@ export async function GET(request) {
             });
         }
 
-        const { searchParams } = new URL(request.url);
+        const { searchParams } = request.nextUrl
         const deptIdParam = searchParams.get("dept_id");
 
-        const departments = await Department.find({}, "_id dept_name");
+        const filteredDepartments = await Department.find(deptIdParam ? { _id: deptIdParam } : {}, "_id dept_name");
         const items = await Item.find({}, "_id item_name cost color size type");
         const stockitems = await Stock.find({}, "item_id dept_id amount");
 
-        const filteredDepartments = deptIdParam
-            ? departments.filter(dept => dept._id.toString() === deptIdParam)
-            : departments;
+        const stock = filteredDepartments.reduce((acc, dept) => {
+            const deptStocks = stockitems.filter((stock) => 
+                stock.dept_id.toString() === dept._id.toString()
+            );
 
-        const stock = filteredDepartments.map(dept => {
-            const deptStocks = stockitems.filter(stock => stock.dept_id.toString() === dept._id.toString());
-            const deptItems = deptStocks.map(stockEntry => {
-                const item = items.find(i => i._id.toString() === stockEntry.item_id.toString());
+            if (deptStocks.length < 1) {
+                return acc;
+            }
+
+            const deptItems = deptStocks.map((stockEntry) => {
+                const item = items.find(
+                   (i) => i._id.toString() === stockEntry.item_id.toString()
+                );
+
                 return {
                     item_id: item ? item._id : stockEntry.item_id,
-                    item_name: item ? item.item_name : null,
-                    cost: item ? item.cost : null,
-                    color: item ? item.color : null,
-                    size: item ? item.size : null,
-                    type: item ? item.type : null,
-                    amount: stockEntry.amount
+                    item_name: item?.item_name,
+                    cost: item?.cost,
+                    color: item?.color,
+                    size: item?.size,
+                    type: item?.type,
+                    amount: stockEntry.amount,
                 };
             });
-            return {
+
+            acc.push({
                 dept_id: dept._id,
                 dept_name: dept.dept_name,
-                items: deptItems
-            };
-        });
+                items: deptItems,
+            });
+
+            return acc;
+        }, []);
+
+
         return NextResponse.json({ stock }, {
             status: 200,
             headers: { 'Content-Type': 'application/json' }
@@ -129,16 +71,3 @@ export async function GET(request) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
-
-/*export async function GET(request) {
-    // TODO: this will be the GET route
-
-    return await mock().then((res) => {
-        return NextResponse.json(res, {
-            status: 201,
-            headers: { 'Content-Type': 'application/json' }
-        })
-    })
-    
-    
-}*/
