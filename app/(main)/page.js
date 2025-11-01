@@ -35,7 +35,6 @@ export default function Home() {
 		axios.get('/api/stock', {params: filterSelected})
 		.then((response) => {
 				setLoadingStock(false)
-				console.log(response.data)
 				setStock(response.data.stock)
 			})
 			.catch((error) => {

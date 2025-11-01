@@ -5,30 +5,55 @@ export default function StockListing ({ stock }) {
 
     return (
         <>
-            {stock?.map((department) => (
-                <Grid
-                    key={department.dept_id}
-                    container
-                    spacing={2}
-                    direction="column"
-                    sx={{
-                        padding: "20px",
-                        backgroundColor:"secondary.main",
-                        borderRadius: "12px",
-                    }}
-                >
-                    <Grid>
-                        <Typography>
-                            {department.dept_name}
-                        </Typography>
-                    </Grid>
+            {stock?.length > 0 ? 
+                stock?.map((department) => (
+                    <Grid
+                        key={department.dept_id}
+                        container
+                        spacing={2}
+                        direction="column"
+                        sx={{
+                            padding: "20px",
+                            backgroundColor:"secondary.main",
+                            borderRadius: "12px",
+                        }}
+                    >
+                        <Grid>
+                            <Typography>
+                                {department.dept_name}
+                            </Typography>
+                        </Grid>
 
-                    <Grid>
-                        <TableItems items={department.items} />
+                        <Grid>
+                            <TableItems items={department.items} />
+                        </Grid>
                     </Grid>
-                </Grid>
-            ))}
+                ))
+            : (
+                <NoStock />
+            )}
         </>
+    )
+}
+
+function NoStock () {
+    return (
+        <Grid
+            container
+            spacing={2}
+            direction="column"
+            justifyContent="center"
+            alignItems="center"
+            sx={{
+                padding: "20px",
+                backgroundColor:"secondary.main",
+                borderRadius: "12px",
+            }}
+        >
+            <Typography fontWeight={600}>
+                No Data Available
+            </Typography>
+        </Grid>
     )
 }
 
