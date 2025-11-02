@@ -2,7 +2,7 @@
 
 import { OutlinedInput, OutlinedSelect } from "@/components/OtulinedInput";
 import { RoleEnum } from "@/models/Role";
-import { Button, Grid, Typography } from "@mui/material";
+import { Alert, Button, Grid, Snackbar, Typography } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -20,6 +20,8 @@ const defaultValues = {
 export default function NewUser() {
     const [departments, setDepartments] = useState([])
     const [isSubmitLoading, setIsSubmitLoading] = useState(false)
+    const [isSuccessSnackbarOpen, setIsSuccessSnackbarOpenSnackbar] = useState(false)
+    const [isErrorSnackbarOpen, setIsErrorSnackbarOpen] = useState()
 
     const {
         control,
@@ -37,10 +39,11 @@ export default function NewUser() {
         await axios.post('/api/employee', data)
             .then((response) => {
                     setIsSubmitLoading(false)
+                    setIsSuccessSnackbarOpenSnackbar(true)
                     reset(defaultValues)
                 })
                 .catch((error) => {
-                    // TODO: Add snackbar
+                    setIsErrorSnackbarOpen(error.response?.data?.message || 'Something went wrong')
                     setIsSubmitLoading(false)
                     console.log(error)
                 })        
@@ -292,6 +295,39 @@ export default function NewUser() {
                     </Grid>
                 </form>
             </Grid>
+
+
+            {/* Success Snackbar */}
+            <Snackbar
+                open={isSuccessSnackbarOpen}
+                autoHideDuration={1200}
+                onClose={() => setIsSuccessSnackbarOpenSnackbar(false)}
+            >
+                <Alert
+                    onClose={() => setIsSuccessSnackbarOpenSnackbar(false)}
+                    severity="success"
+                    variant="filled"
+                    sx={{ width: '100%' }}
+                >
+                    Employee created!
+                </Alert>
+            </Snackbar>
+
+            {/* Failure Snackbar */}
+            <Snackbar
+                open={!!isErrorSnackbarOpen}
+                autoHideDuration={1200}
+                onClose={() => setIsErrorSnackbarOpen(undefined)}
+                >
+                <Alert
+                    onClose={() => setIsErrorSnackbarOpen(undefined)}
+                    severity="error"
+                    variant="filled"
+                    sx={{ width: '100%' }}
+                >
+                    {isErrorSnackbarOpen}
+                </Alert>
+            </Snackbar>            
         </Grid>
     )
 }
