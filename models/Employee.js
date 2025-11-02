@@ -1,20 +1,21 @@
 import mongoose from "mongoose"
 import bcrypt from "bcrypt"
+import { RoleEnum } from "./Role";
 
-SALT_WORK_FACTOR = 10;
+const SALT_WORK_FACTOR = 10;
 
 const Employee = new mongoose.Schema({
         dept_id: { type: mongoose.Schema.Types.ObjectId, ref: "Department", required: true },
         first_name: { type: String, required: true },
         last_name: { type: String, required: true },
-        role: { type: String, enum: ["Manager", "Associate"], required: true },
+        role: { type: String, enum: RoleEnum, required: true },
         email: { type: String, required: true },
         password_hash: { type: String, required: true }
     },
     { timestamps: true }
 );
 
-Employee.pre(save, function(next) {
+Employee.pre("save", function(next) {
     var employee = this;
 
     // only hash the password if it has been modified (or is new)

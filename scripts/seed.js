@@ -17,7 +17,6 @@ async function seed() {
     { dept_name: "Home Goods" },
     { dept_name: "Education" }
   ];
-
   await Department.insertMany(depts);
 
   const items = [
@@ -31,7 +30,8 @@ async function seed() {
     { item_name: "Jacket", type: "outerwear", cost: 50, color: "red", size: "L" },
     { item_name: "Backpack", type: "accessory", cost: 30, color: "black", size: null },
     { item_name: "Water Bottle", type: "kitchenware", cost: 10, color: "silver", size: null }
-  ];*/
+  ];
+  await Item.insertMany(items);
 
   const stock = [
     { item_id: (await Item.findOne({ item_name: "Plates" }))._id, dept_id: (await Department.findOne({ dept_name: "Home Goods" }))._id, amount: 50 },
@@ -45,8 +45,7 @@ async function seed() {
     { item_id: (await Item.findOne({ item_name: "Backpack" }))._id, dept_id: (await Department.findOne({ dept_name: "Education" }))._id, amount: 90 },
     { item_id: (await Item.findOne({ item_name: "Water Bottle" }))._id, dept_id: (await Department.findOne({ dept_name: "Health" }))._id, amount: 120 }
   ];
-
-  await Stock.insertMany(stock);
+  await Stock.insertMany(stock);*/
 
   console.log("Test data inserted!");
 
