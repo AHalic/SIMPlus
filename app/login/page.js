@@ -1,6 +1,6 @@
 "use client";
 
-import CustomInput from "@/components/Input";
+import { OutlinedInput } from "@/components/OtulinedInput";
 import { EmailOutlined, LockOutline } from "@mui/icons-material";
 import { Button, Grid, InputAdornment, Typography } from "@mui/material";
 import Image from "next/image";
@@ -69,7 +69,7 @@ export default function Login() {
                 {/* inputs */}
                 <Grid container direction="column" gap="1rem">
                     <Grid width="100%">
-                        <CustomInput 
+                        <OutlinedInput 
                             label="Email" 
                             placeholder="you@email.com"
                             slotProps={{
@@ -85,7 +85,7 @@ export default function Login() {
                     </Grid>
 
                     <Grid width="100%">
-                        <CustomInput 
+                        <OutlinedInput 
                             label="Password" 
                             placeholder="••••"
                             type="password"
