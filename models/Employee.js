@@ -2,7 +2,7 @@ import mongoose from "mongoose"
 import bcrypt from "bcrypt"
 import { RoleEnum } from "./Role";
 
-SALT_WORK_FACTOR = 10;
+const SALT_WORK_FACTOR = 10;
 
 const Employee = new mongoose.Schema({
         dept_id: { type: mongoose.Schema.Types.ObjectId, ref: "Department", required: true },
@@ -15,7 +15,7 @@ const Employee = new mongoose.Schema({
     { timestamps: true }
 );
 
-Employee.pre(save, function(next) {
+Employee.pre("save", function(next) {
     var employee = this;
 
     // only hash the password if it has been modified (or is new)
