@@ -43,7 +43,7 @@ export default function NewUser() {
                     reset(defaultValues)
                 })
                 .catch((error) => {
-                    setIsErrorSnackbarOpen(error.response?.data?.message || 'Something went wrong')
+                    setIsErrorSnackbarOpen(error.response?.data?.error || error.message || 'Something went wrong')
                     setIsSubmitLoading(false)
                     console.log(error)
                 })        
