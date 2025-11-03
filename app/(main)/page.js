@@ -3,7 +3,7 @@
 import StockListing, { StockListingSkeleton } from "@/components/StockListing";
 import { StyledSelect, StyledInput } from "@/components/StyledInputs";
 import { Search } from "@mui/icons-material";
-import { Grid } from "@mui/material";
+import { Alert, darken, Grid, IconButton, Snackbar, useTheme } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
@@ -12,8 +12,12 @@ import { useEffect, useState } from "react";
 export default function Home() {
 	const [departments, setDepartments] = useState([])
 	const [filterSelected, setFilterSelected] = useState({dept_id: "", id: ""})
+	const [skuType, setSkuType] = useState("")
 	const [stock, setStock] = useState([])
 	const [loadingStock, setLoadingStock] = useState(true)
+	const [isErrorSnackbarOpen, setIsErrorSnackbarOpen] = useState()
+
+	const theme = useTheme()
 
 
 	// fetch departments
@@ -24,6 +28,7 @@ export default function Home() {
 			})
 			.catch((error) => {
 				console.log(error)
+				setIsErrorSnackbarOpen(error.response?.data?.error || error.message || 'Failed to fetch departments')
 			})
 	}, [])
 
@@ -40,6 +45,7 @@ export default function Home() {
 			.catch((error) => {
 				console.log(error)
 				setLoadingStock(false)
+				setIsErrorSnackbarOpen(error.response?.data?.error || error.message || 'Failed to fetch stock')
 			})
 	}, [filterSelected])
 
@@ -82,9 +88,19 @@ export default function Home() {
 					<StyledInput 
 						label="Search By SKU"
 						endAdornment={
-							<Search sx={{ color: "divider" }} />
+							<IconButton
+								onClick={(e) => setFilterSelected(prev => ({...prev, id: skuType}))}
+								sx={{ 
+									borderRadius: "12px",
+									marginRight: '-14px',
+									backgroundColor: darken(theme.palette.background.default, 0.05),
+								}}
+							>
+								<Search sx={{ color: "divider" }} />
+							</IconButton>
 						}
-						value={filterSelected.id}
+						value={skuType}
+						onChange={(e) => setSkuType(e.target.value)}
 					/>
 				</Grid>
 			</Grid>
@@ -96,6 +112,21 @@ export default function Home() {
 				<StockListing stock={stock} />
 			)}
 			
+
+			<Snackbar
+				open={!!isErrorSnackbarOpen}
+				autoHideDuration={1200}
+				onClose={() => setIsErrorSnackbarOpen(undefined)}
+			>
+				<Alert
+					onClose={() => setIsErrorSnackbarOpen(undefined)}
+					severity="error"
+					variant="filled"
+					sx={{ width: '100%' }}
+				>
+					{isErrorSnackbarOpen}
+				</Alert>
+			</Snackbar>     
 		</Grid>
     );
 }

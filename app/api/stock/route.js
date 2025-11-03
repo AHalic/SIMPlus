@@ -23,10 +23,15 @@ export async function GET(request) {
 
         const { searchParams } = request.nextUrl
         const deptIdParam = searchParams.get("dept_id");
+        const idParam = searchParams.get("id");
+
+        if (idParam && !mongoose.Types.ObjectId.isValid(idParam)) {
+            return NextResponse.json({ error: "Invalid SKU" }, { status: 500 });
+        }
 
         const filteredDepartments = await Department.find(deptIdParam ? { _id: deptIdParam } : {}, "_id dept_name");
-        const items = await Item.find({}, "_id item_name cost color size type");
-        const stockitems = await Stock.find({}, "item_id dept_id amount");
+        const items = await Item.find(idParam ? { _id: idParam } : {}, "_id item_name cost color size type");
+        const stockitems = await Stock.find(idParam ? { item_id: idParam } : {}, "item_id dept_id amount");
 
         const stock = filteredDepartments.reduce((acc, dept) => {
             const deptStocks = stockitems.filter((stock) => 
