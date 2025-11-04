@@ -1,6 +1,6 @@
 import mongoose from "mongoose"
 import bcrypt from "bcrypt"
-import { RoleEnum } from "./Role";
+import { RoleEnum } from "./Enum.js";
 
 const SALT_WORK_FACTOR = 10;
 

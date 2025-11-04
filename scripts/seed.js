@@ -3,7 +3,7 @@ import Item from "../models/Item.js";
 import Stock from "../models/Stock.js";
 import Transaction from "../models/Transaction.js";
 import Item_Sold from "../models/Item_Sold.js";
-import { PaymentEnum } from "../models/Payment_Method.js";
+import { PaymentEnum } from "../models/Enum.js";
 import mongoose from "mongoose";
 import "dotenv/config";
 
@@ -63,7 +63,7 @@ async function seed() {
     { returned_id: null, payment_method: PaymentEnum[1] },
     { returned_id: null, payment_method: PaymentEnum[0] }
   ];
-  await Transaction.insertMany(transac);*/
+  await Transaction.insertMany(transac);
 
   const transactions = await Transaction.find({}, "_id");
   const ids = transactions.map(tx => tx._id);
@@ -92,7 +92,7 @@ async function seed() {
     { transaction_id: ids[10], item_id: (await Item.findOne({ item_name: "Coffee Mug" }))._id, amount_sold: 4, sell_price: (await Item.findOne({ item_name: "Coffee Mug" })).cost },
     { transaction_id: ids[10], item_id: (await Item.findOne({ item_name: "Water Bottle" }))._id, amount_sold: 1, sell_price: (await Item.findOne({ item_name: "Water Bottle" })).cost },
   ];
-  await Item_Sold.insertMany(sold);
+  await Item_Sold.insertMany(sold);*/
 
   console.log("Test data inserted!");
 

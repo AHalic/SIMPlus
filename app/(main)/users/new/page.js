@@ -1,7 +1,7 @@
 "use client";
 
 import { OutlinedInput, OutlinedSelect } from "@/components/OtulinedInput";
-import { RoleEnum } from "@/models/Role";
+import { RoleEnum } from "@/models/Enum.js";
 import { Alert, Button, Grid, Snackbar, Typography } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -180,7 +180,7 @@ export default function NewUser() {
 
                                 <Grid size={{ xs: 6 }}>
                                     <Controller
-                                        name={`password`}
+                                        name={`password`} // Make password hidden by stars? ex. ********* when typing
                                         control={control}
                                         rules={{ 
                                             required: "Field required", 
