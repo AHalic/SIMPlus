@@ -5,9 +5,12 @@ import "dotenv/config";
 
 /**
  * Employee GET route 
- * @param {email, password} request 
- * @returns NextReponse containing Employee if authenticated
+ * @param {start_date, end_date, dept_id?, bool{best_worst_seller, rev, forecast{day, week, month, year}, period, send_to_email}} request 
+ * @returns NextReponse containing the FILE
  */
+
+// Download and maybe email file.
+
 
 export async function POST(request) {
     const { email, password } = await request.json();
@@ -18,18 +21,6 @@ export async function POST(request) {
                 useUnifiedTopology: true,
             });
         }
-        const employee = await Employee.findOne({ email: email });
-        if (!employee) {
-            return NextResponse.json({ error: "Authentication failed. Employee not found." }, { status: 401 });
-        }
-        employee.comparePassword(password, (err, isMatch) => {
-            if (err) {
-                return NextResponse.json({ error: "Error comparing password" }, { status: 500 });
-            }
-            if (!isMatch) {
-                return NextResponse.json({ error: "Invalid password" }, { status: 401 });
-            }
-        });
         return NextResponse.json({ message: "Login successful", employee }, {
             status: 200,
             headers: { 'Content-Type': 'application/json' }
