@@ -1,5 +1,5 @@
 import { InsertChartOutlined, LogoutOutlined, PeopleAltOutlined, PersonOutline } from "@mui/icons-material";
-import { Divider, Drawer, List, Typography } from "@mui/material";
+import { Drawer, List, Typography } from "@mui/material";
 import Link from "next/link";
 import ListButton from "./ListButton";
 import BoxIcon from "./BoxIcon";
