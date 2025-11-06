@@ -54,7 +54,7 @@ export default function Home() {
 		<Grid 
 			container
 			direction="column"
-			padding="40px 36px"
+			padding="16px 36px"
 			spacing={2}
 		>
 			{/* Search bar */}
