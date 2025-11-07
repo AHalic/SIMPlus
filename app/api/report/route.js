@@ -1,20 +1,22 @@
 import { NextResponse } from "next/server";
-import Employee from "../../../models/Employee.js";
+import Transaction from "../../../models/Transaction.js";
+import Item_Sold from "../../../Item_Sold.js";
+import Item from "../../../models/Item.js";
 import mongoose from "mongoose";
 import "dotenv/config";
 
 /**
  * Employee GET route 
  * @param {start_date, end_date, dept_id?} request 
- * @returns NextReponse containing the total_revenue, total_transactions, and avg_revenue
+ * @returns NextReponse containing the total_sale, total_transaction, and avg_transaction, top_product
  */
 
 
-// Calculate and send total_revenue, total_transactions, and avg_revenue.
+// Calculate and send total_sale, total_transaction, and avg_transaction, top_product.
 
 
-export async function POST(request) {
-    const { email, password } = await request.json();
+export async function GET(request) {
+    const { start_date, end_date, dept_id } = await request.json();
     try {
         if (mongoose.connection.readyState === 0) {
             await mongoose.connect(process.env.MONGODB_URI, {
@@ -22,7 +24,75 @@ export async function POST(request) {
                 useUnifiedTopology: true,
             });
         }
-        return NextResponse.json({ message: "Login successful", employee }, {
+
+        // Match filter for date range
+        const match = {};
+        if (start_date && end_date) {
+            match.createdAt = { $gte: new Date(start_date), $lte: new Date(end_date) };
+        }
+
+        // Join with Item collection to filter by dept_id if provided
+        const pipeline = [
+            { $match: match },
+            {
+                $lookup: {
+                    from: "Item",
+                    localField: "item_id",
+                    foreignField: "_id",
+                    as: "item"
+                }
+            },
+            { $unwind: "$item" }
+        ];
+
+        // Filter by department if dept_id is provided
+        if (dept_id) {
+            pipeline.push({ $match: { "item.dept_id": new mongoose.ObjectId(dept_id) } });
+        }
+
+        // Aggregation to calculate total_sale, total_transaction, avg_transaction, and top_product
+        pipeline.push({
+            $facet: {
+                total_sale: [
+                    {
+                        $group: {
+                            _id: null,
+                            total_sale: { $sum: { $multiply: ["$amount_sold", "$item.cost"] } }
+                        }
+                    }
+                ],
+                total_transactions: [
+                    {
+                        $group: { _id: "$transaction_id" }
+                    },
+                    {
+                        $group: { _id: null, count: { $sum: 1 } }
+                    }
+                ],
+                top_product: [
+                    {
+                        $group: {
+                            _id: "$item._id",
+                            name: { $first: "$item.item_name" },
+                            sold: { $sum: "$amount_sold" }
+                        }
+                    },
+                    { $sort: { sold: -1 } },
+                    { $limit: 1 }
+                ]
+            }
+        });
+
+        // Execute aggregation
+        const [aggResult] = await Item_Sold.aggregate(pipeline);
+        const total_sale = aggResult.total_sale[0]?.total_sale || 0;
+        const total_transactions = aggResult.total_transactions[0]?.count || 0;
+        const top_product = aggResult.top_product[0] || null;
+        const avg_transaction = total_transactions ? total_sale / total_transactions : 0;
+
+
+
+        return NextResponse.json({ total_sale, total_transactions, top_product, avg_transaction }, {
             status: 200,
             headers: { 'Content-Type': 'application/json' }
         });
