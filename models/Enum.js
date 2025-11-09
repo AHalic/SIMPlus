@@ -1,7 +1,20 @@
-const RoleEnum = ["Manager", "Associate"]
+const RoleEnum = [
+    "Manager",
+    "Associate"
+]
 
-export { RoleEnum }
+const PaymentEnum = [
+    "Cash",
+    "Credit Card",
+    "Debit Card"
+]
 
-const PaymentEnum = ["Cash", "Credit Card", "Debit Card"]
+const PeriodEnum = [
+    "Day",
+    "Week",
+    "Month",
+    "Year"
+]
 
-export { PaymentEnum }
+
+export { RoleEnum, PaymentEnum, PeriodEnum }
