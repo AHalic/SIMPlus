@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import Employee from "../../../models/Employee.js";
+import Employee from "../../../../models/Employee.js";
 import mongoose from "mongoose";
 import "dotenv/config";
 

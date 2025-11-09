@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import Transaction from "../../../models/Transaction.js";
-import Item_Sold from "../../../Item_Sold.js";
+import Item_Sold from "../../../models/Item_Sold.js";
 import Item from "../../../models/Item.js";
 import mongoose from "mongoose";
 import "dotenv/config";
@@ -14,9 +14,8 @@ import "dotenv/config";
 
 // Calculate and send total_sale, total_transaction, and avg_transaction, top_product.
 
-
 export async function GET(request) {
-    const { start_date, end_date, dept_id } = await request.json();
+    const { start_date, end_date, dept_id } = Object.fromEntries(request.nextUrl.searchParams);
     try {
         if (mongoose.connection.readyState === 0) {
             await mongoose.connect(process.env.MONGODB_URI, {
