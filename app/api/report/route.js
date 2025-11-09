@@ -87,7 +87,7 @@ export async function GET(request) {
         const total_sale = aggResult.total_sale[0]?.total_sale || 0;
         const total_transactions = aggResult.total_transactions[0]?.count || 0;
         const top_product = aggResult.top_product[0] || null;
-        const avg_transaction = total_transactions ? total_sale / total_transactions : 0;
+        const avg_transaction = total_transactions ? Number(total_sale / total_transactions).toFixed(2) : 0;
 
 
 
