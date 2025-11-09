@@ -1,7 +1,7 @@
 import { ExpandMore } from "@mui/icons-material";
-import { FormControl, FormHelperText, InputLabel, MenuItem, OutlinedInput, Select, styled } from "@mui/material";
+import { alpha, FormControl, FormHelperText, InputLabel, MenuItem, OutlinedInput, Select, styled } from "@mui/material";
 
-const SelectInput = styled(OutlinedInput)(({ theme }) => ({
+const StyledOutlinedInput = styled(OutlinedInput)(({ theme }) => ({
     height: '100%',
 
     '& .MuiSelect-select': {
@@ -37,6 +37,9 @@ const SelectInput = styled(OutlinedInput)(({ theme }) => ({
         '&.Mui-error fieldset': {
           border: `2px solid ${theme.palette.error.main}`,
         },
+        '&.Mui-disabled fieldset': {
+            border: `2px solid ${alpha(theme.palette.action.disabledBackground, 0.05)}`,
+        },
     },
 }));  
 
@@ -67,7 +70,7 @@ const StyledSelect = ({ label, options, helperText, error, ...props }) => {
                 label={label}
                 IconComponent={ExpandMore}
                 input={
-                    <SelectInput label={label} error={error}/>
+                    <StyledOutlinedInput label={label} error={error}/>
                 }
                 {...props}
             >
@@ -79,7 +82,7 @@ const StyledSelect = ({ label, options, helperText, error, ...props }) => {
             </Select>
 
             <FormHelperText>
-                {helperText}
+                {helperText || ' '}
             </FormHelperText>
         </FormControl>
     )
@@ -102,13 +105,13 @@ const StyledInput = ({ label, value, helperText, error, ...props }) => {
                 {label}
             </InputLabel>
 
-            <SelectInput
+            <StyledOutlinedInput
                 fullWidth
                 variant="outlined"
-                sx={{                     
+                sx={{
                     '& .MuiOutlinedInput-input': {
                         padding: '8px 16px!important',
-                    }    
+                    },
                 }}
                 id={`input-${label}`}
                 name={`input-${label}`}
@@ -116,9 +119,12 @@ const StyledInput = ({ label, value, helperText, error, ...props }) => {
                 value={value}
                 {...props}
             />
+
+            <FormHelperText>
+                {helperText || ' '}
+            </FormHelperText>
         </FormControl>
     )
 }
-
 
 export { StyledInput, StyledSelect };
