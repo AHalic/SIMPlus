@@ -102,7 +102,7 @@ export default function Report() {
                     {value: i._id, label: i.dept_name}
                 ))
 
-                setDepartments(transformedDept)
+                setDepartments([{value: "", label: "All Departments"}, ...transformedDept])
             })
             .catch((error) => {
                 console.log(error)
@@ -212,9 +212,6 @@ export default function Report() {
                                 <Controller
                                     name={`dept_id`}
                                     control={control}
-                                    rules={{ 
-                                        required: "Field required",
-                                    }}
                                     render={({ field : { onChange, onBlur, value, ref } }) => (
                                         <StyledSelect
                                             error={!!errors.dept_id}
