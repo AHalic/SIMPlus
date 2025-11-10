@@ -8,6 +8,7 @@ import axios from "axios";
 import { StyledInput, StyledSelect } from "@/components/StyledInputs";
 import StyledCheckbox from "@/components/StyledCheckbox";
 import { PeriodEnum } from "@/models/Enum";
+import Preview from "./Preview";
 
 
 const defaultValues = {
@@ -111,11 +112,12 @@ export default function Report() {
         <Grid 
             container
             paddingX="32px"
+            spacing={2}
         >
             <Grid
                 container
                 direction="column"
-                spacing={2}
+                spacing={1}
                 sx={{
                     backgroundColor: 'secondary.main',
                     width: '100%',
@@ -134,8 +136,7 @@ export default function Report() {
                 </Grid>
 
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    {/* <Grid spacing={2} container direction="column"> */}
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
 
                         {/* base params */}
                         <Grid spacing={2} container direction="row" alignItems="center">
@@ -261,7 +262,7 @@ export default function Report() {
                                 Select types of report
                             </Typography>
 
-                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
 
                             <Grid container direction="row" spacing={2}>
                                 <Grid size={3}>
@@ -437,6 +438,8 @@ export default function Report() {
                 </form>
 
             </Grid>
+
+            <Preview data={previewData} />
         </Grid>
     )
 }
