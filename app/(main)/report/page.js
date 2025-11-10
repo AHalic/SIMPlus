@@ -43,6 +43,7 @@ export default function Report() {
             ...data,
             start_date: data.start_date ? (new Date(data.start_date)).toISOString() : null,
             end_date: data.end_date ? (new Date(data.end_date)).toISOString() : null,
+            dept_name: departments.find((dept) => dept.value === data.dept_id)?.label || "",
         }
 
         // first generate preview

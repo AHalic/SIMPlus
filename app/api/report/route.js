@@ -15,7 +15,7 @@ import "dotenv/config";
 // Calculate and send total_sale, total_transaction, and avg_transaction, top_product.
 
 export async function GET(request) {
-    const { start_date, end_date, dept_id } = Object.fromEntries(request.nextUrl.searchParams);
+    const { start_date, end_date, dept_id, dept_name } = Object.fromEntries(request.nextUrl.searchParams);
     try {
         if (mongoose.connection.readyState === 0) {
             await mongoose.connect(process.env.MONGODB_URI, {
@@ -89,9 +89,18 @@ export async function GET(request) {
         const top_product = aggResult.top_product[0] || null;
         const avg_transaction = total_transactions ? Number(total_sale / total_transactions).toFixed(2) : 0;
 
+        const response = {
+            total_sale,
+            total_transactions,
+            top_product: top_product ? top_product.name : "N/A",
+            avg_transaction,
+            start_date,
+            end_date,
+            dept_name: dept_name || "All Departments"
+        };
 
 
-        return NextResponse.json({ total_sale, total_transactions, top_product, avg_transaction }, {
+        return NextResponse.json(response, {
             status: 200,
             headers: { 'Content-Type': 'application/json' }
         });

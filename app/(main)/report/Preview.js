@@ -44,7 +44,7 @@ export default function Preview({ data }) {
                             </Typography>
                             <Typography variant="body1" sx={{color:"text.secondary"}}>
                                 Period: {(new Date(data?.start_date)).toLocaleDateString()} - {(new Date(data?.end_date)).toLocaleDateString()}
-                                &nbsp; | Department: {data?.department}
+                                &nbsp; | Department: {data?.dept_name}
                             </Typography>                 
                             <Divider 
                                 sx={{ 
