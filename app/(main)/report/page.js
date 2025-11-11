@@ -5,7 +5,7 @@ import { Box, Button, Grid, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import axios from "axios";
-import { StyledInput, StyledSelect } from "@/components/StyledInputs";
+import { FilledInput, FilledSelect } from "@/components/FilledInputs";
 import StyledCheckbox from "@/components/StyledCheckbox";
 import { PeriodEnum } from "@/models/Enum";
 import Preview from "./Preview";
@@ -213,7 +213,7 @@ export default function Report() {
                                     name={`dept_id`}
                                     control={control}
                                     render={({ field : { onChange, onBlur, value, ref } }) => (
-                                        <StyledSelect
+                                        <FilledSelect
                                             error={!!errors.dept_id}
                                             helperText={errors.dept_id?.message}
                                             fullWidth
@@ -236,7 +236,7 @@ export default function Report() {
                                         required: "Field required",
                                     }}
                                     render={({ field : { onChange, onBlur, value, ref } }) => (
-                                        <StyledSelect
+                                        <FilledSelect
                                             error={!!errors.period_slice}
                                             helperText={errors.period_slice?.message}
                                             label="Slices Period"
@@ -289,7 +289,7 @@ export default function Report() {
                                             required: disableWorstBestSellerOptions ? "Field required" : false,
                                         }}
                                         render={({ field : { onChange, onBlur, value, ref } }) => (
-                                            <StyledInput
+                                            <FilledInput
                                                 error={!!errors.top_seller}
                                                 helperText={errors.top_seller?.message}
                                                 label="Amount of Best Sellers to include"
@@ -312,7 +312,7 @@ export default function Report() {
                                             required: disableWorstBestSellerOptions ? "Field required" : false,
                                         }}
                                         render={({ field : { onChange, onBlur, value, ref } }) => (
-                                            <StyledInput
+                                            <FilledInput
                                                 error={!!errors.worse_seller}
                                                 helperText={errors.worse_seller?.message}
                                                 label="Amount of Worst Sellers to include"
@@ -372,7 +372,7 @@ export default function Report() {
                                             required: disableForecastOptions ? "Field required" : false,
                                         }}
                                         render={({ field : { onChange, onBlur, value, ref } }) => (
-                                            <StyledSelect
+                                            <FilledSelect
                                                 error={!!errors.period_forecast}
                                                 helperText={errors.period_forecast?.message}
                                                 label="Period of Forecast"

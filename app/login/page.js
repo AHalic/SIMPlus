@@ -4,7 +4,7 @@ import { OutlinedInput } from "@/components/OtulinedInput";
 import { EmailOutlined, LockOutline } from "@mui/icons-material";
 import { Button, Grid, InputAdornment, Typography } from "@mui/material";
 import { useState } from "react";
-import { StyledInput } from "@/components/StyledInputs";
+import { FilledInput } from "@/components/FilledInputs";
 import Image from "next/image";
 import axios from "axios";
 import Router from "next/router";
@@ -120,7 +120,7 @@ export default function Login() {
                     </Grid>
 
                     <Grid width="100%">
-                        <StyledInput
+                        <FilledInput
                             label="Password"
                             type="password"
                             value={password}

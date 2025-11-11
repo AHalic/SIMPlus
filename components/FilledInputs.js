@@ -44,7 +44,7 @@ const StyledOutlinedInput = styled(OutlinedInput)(({ theme }) => ({
 }));  
 
 
-const StyledSelect = ({ label, options, helperText, error, ...props }) => {
+const FilledSelect = ({ label, options, helperText, error, ...props }) => {
     return (
         <FormControl variant="outlined" fullWidth error={error}>
             <InputLabel
@@ -89,7 +89,7 @@ const StyledSelect = ({ label, options, helperText, error, ...props }) => {
 }
 
 
-const StyledInput = ({ label, value, helperText, error, ...props }) => {
+const FilledInput = ({ label, value, helperText, error, ...props }) => {
     return (
         <FormControl variant="outlined" fullWidth error={error}>
             <InputLabel
@@ -127,4 +127,4 @@ const StyledInput = ({ label, value, helperText, error, ...props }) => {
     )
 }
 
-export { StyledInput, StyledSelect };
+export { FilledInput, FilledSelect };
