@@ -30,7 +30,7 @@ export async function GET(request) {
             match.createdAt = { $gte: new Date(start_date), $lte: new Date(end_date) };
         }
 
-        // Join with Item collection to filter by dept_id if provided
+        // Join with Item collection
         const pipeline = [
             { $match: match },
             {
