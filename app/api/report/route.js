@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import Transaction from "../../../models/Transaction.js";
 import Item_Sold from "../../../models/Item_Sold.js";
 import Item from "../../../models/Item.js";
+import Stock from "../../../models/Stock.js";
 import mongoose from "mongoose";
 import "dotenv/config";
 
@@ -41,12 +42,26 @@ export async function GET(request) {
                     as: "item"
                 }
             },
-            { $unwind: "$item" }
+            { $unwind: "$item" },
+            {
+                $lookup: {
+                    from: "Stock",
+                    localField: "item._id",
+                    foreignField: "item_id",
+                    as: "stock"
+                }
+            },
+            { $unwind: "$stock" },
         ];
 
         // Filter by department if dept_id is provided
+        pipeline.push({
+            $addFields: {
+                "stock.dept_id_str": { $toString: "$stock.dept_id" }
+            }
+        });
         if (dept_id) {
-            pipeline.push({ $match: { "item.dept_id": new mongoose.ObjectId(dept_id) } });
+            pipeline.push({ $match: { "stock.dept_id_str": dept_id } });
         }
 
         // Aggregation to calculate total_sale, total_transaction, avg_transaction, and top_product
@@ -56,7 +71,7 @@ export async function GET(request) {
                     {
                         $group: {
                             _id: null,
-                            total_sale: { $sum: { $multiply: ["$amount_sold", "$item.cost"] } }
+                            total_sale: { $sum: { $multiply: ["$amount_sold", "$sell_price"] } }
                         }
                     }
                 ],
