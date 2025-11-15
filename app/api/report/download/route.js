@@ -35,7 +35,7 @@ export async function POST(request) {
                 $lte: new Date(end_date)
             }
         };
-        const rev_pipeline = [
+        const revPipeline = [
             { $match: matchStage },
             {
                 $lookup: {
@@ -58,13 +58,13 @@ export async function POST(request) {
         ];
 
         // Filter by department if dept_id is provided
-        rev_pipeline.push({
+        revPipeline.push({
             $addFields: {
                 "stock.dept_id_str": { $toString: "$stock.dept_id" }
             }
         });
         if (dept_id) {
-            rev_pipeline.push({ $match: { "stock.dept_id_str": dept_id } });
+            revPipeline.push({ $match: { "stock.dept_id_str": dept_id } });
         }
 
         // REVENUE
@@ -97,23 +97,23 @@ export async function POST(request) {
 
             // Aggregation revenue pipeline
             if (groupId) {
-                rev_pipeline.push({
+                revPipeline.push({
                     $group: {
                         _id: groupId,
                         total_revenue: { $sum: { $multiply: ["$amount_sold", "$sell_price"] } }
                     }
                 });
             } else {
-                rev_pipeline.push({
+                revPipeline.push({
                     $group: {
                         _id: null,
                         total_revenue: { $sum: { $multiply: ["$amount_sold", "$sell_price"] } }
                     }
                 });
             }
-            rev_pipeline.push({ $sort: { "_id": 1 } });
+            revPipeline.push({ $sort: { "_id": 1 } });
 
-            const revenue = await Item_Sold.aggregate(rev_pipeline);
+            const revenue = await Item_Sold.aggregate(revPipeline);
 
             // Format revenue for Excel
             let revenue_sheet;
