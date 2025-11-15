@@ -16,10 +16,10 @@ const defaultValues = {
     end_date: null,
     dept_id: "",
     period_slice: "",
-    include_best_worst_seller: false,
-    top_seller: "",
-    worse_seller: "",
-    include_revenue: false,
+    include_best_worst_seller: true,
+    top_seller: 5,
+    worse_seller: 5,
+    include_revenue: true,
     include_forecast: false,
     period_forecast: "",
     send_to_email: false,
@@ -28,17 +28,20 @@ const defaultValues = {
 export default function Report() {
     const [departments, setDepartments] = useState([])
     const [disableWorstBestSellerOptions, setDisableWorstBestSellerOptions] = useState(false)
-    const [disableForecastOptions, setDisableForecastOptions] = useState(false)
+    const [disableForecastOptions, setDisableForecastOptions] = useState(true)
+    const [isLoading, setIsLoading] = useState(false)
 
     const [previewData, setPreviewData] = useState(null)
 
     const onReset = () => {
         reset(defaultValues)
-        setDisableForecastOptions(false)
+        setDisableForecastOptions(true)
         setDisableWorstBestSellerOptions(false)
     }
 
     const onSubmit = async (data) => {
+        setIsLoading(true)
+
         const formatedData = {
             ...data,
             start_date: data.start_date ? (new Date(data.start_date)).toISOString() : null,
@@ -49,19 +52,25 @@ export default function Report() {
         // first generate preview
         await axios.get('/api/report', { params: formatedData })
         .then((res) => {
-            console.log(res.data)
+            setIsLoading(false)
             setPreviewData(res.data)
         })
         .catch((error) => {
+            setIsLoading(false)
             console.log(error)
         })
 
 
         // then generate full report
-        await axios.post('/api/report/download', formatedData)
+        await axios.post('/api/report/download', formatedData, { responseType: 'blob' })
         .then((res) => {
-            console.log(res.data)
-            // TODO: download file
+            const url = window.URL.createObjectURL(new Blob([res.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'report.xlsx');
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode.removeChild(link);
         })
         .catch((error) => {
             console.log(error)
@@ -80,7 +89,7 @@ export default function Report() {
 
     useEffect(() => {
         // reset worst/best seller fields based on checkbox to disable input
-        if (!disableWorstBestSellerOptions) {
+        if (disableWorstBestSellerOptions) {
             resetField("top_seller", { defaultValue: "" });
             resetField("worse_seller", { defaultValue: "" });
         } else {
@@ -90,7 +99,7 @@ export default function Report() {
     }, [disableWorstBestSellerOptions, resetField]);
     
     useEffect(() => {
-        if (!disableForecastOptions) {
+        if (disableForecastOptions) {
             resetField("period_forecast", { defaultValue: "" });
         }
     }, [disableForecastOptions, resetField]);
@@ -271,7 +280,7 @@ export default function Report() {
                                             <StyledCheckbox
                                                 label="Include Best Worse/Seller"
                                                 onChange={(e) => {
-                                                    setDisableWorstBestSellerOptions(e.target.checked)
+                                                    setDisableWorstBestSellerOptions(!e.target.checked)
                                                     onChange(e)
                                                 }}
                                                 onBlur={onBlur}
@@ -286,7 +295,7 @@ export default function Report() {
                                         name={`top_seller`}
                                         control={control}
                                         rules={{
-                                            required: disableWorstBestSellerOptions ? "Field required" : false,
+                                            required: disableWorstBestSellerOptions ? false : "Field required",
                                         }}
                                         render={({ field : { onChange, onBlur, value, ref } }) => (
                                             <FilledInput
@@ -298,7 +307,7 @@ export default function Report() {
                                                 onBlur={onBlur}
                                                 value={value}
                                                 inputRef={ref}
-                                                disabled={!disableWorstBestSellerOptions}
+                                                disabled={disableWorstBestSellerOptions}
                                             />
                                         )}
                                     />
@@ -309,7 +318,7 @@ export default function Report() {
                                         name={`worse_seller`}
                                         control={control}
                                         rules={{
-                                            required: disableWorstBestSellerOptions ? "Field required" : false,
+                                            required: disableWorstBestSellerOptions ? false : "Field required",
                                         }}
                                         render={({ field : { onChange, onBlur, value, ref } }) => (
                                             <FilledInput
@@ -321,7 +330,7 @@ export default function Report() {
                                                 onBlur={onBlur}
                                                 value={value}
                                                 inputRef={ref}
-                                                disabled={!disableWorstBestSellerOptions}
+                                                disabled={disableWorstBestSellerOptions}
                                             />
                                         )}
                                     />
@@ -353,7 +362,7 @@ export default function Report() {
                                             <StyledCheckbox
                                                 label="Include Forecast Revenue"
                                                 onChange={(e) => {
-                                                    setDisableForecastOptions(e.target.checked)
+                                                    setDisableForecastOptions(!e.target.checked)
                                                     onChange(e)
                                                 }}
                                                 onBlur={onBlur}
@@ -369,7 +378,7 @@ export default function Report() {
                                         name={`period_forecast`}
                                         control={control}
                                         rules={{
-                                            required: disableForecastOptions ? "Field required" : false,
+                                            required: disableForecastOptions ? false : "Field required",
                                         }}
                                         render={({ field : { onChange, onBlur, value, ref } }) => (
                                             <FilledSelect
@@ -383,7 +392,7 @@ export default function Report() {
                                                 options={PeriodEnum.map((period) => (
                                                     { value: period, label: period }
                                                 ))}
-                                                disabled={!disableForecastOptions}
+                                                disabled={disableForecastOptions}
                                             />
                                         )}
                                     />                          
@@ -437,7 +446,7 @@ export default function Report() {
 
             </Grid>
 
-            <Preview data={previewData} />
+            <Preview data={previewData} isLoading={isLoading} />
         </Grid>
     )
 }
