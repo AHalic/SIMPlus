@@ -7,40 +7,42 @@ Group: Sophie Dilhon, Hazem Zidan, Jack Taormino, Tochukwu Okwudiri, Tony Bogonk
 Report Document Folder [link]([https://docs.google.com/document/d/1tlu8QF45v0Fqf3tlgxm7QfU9jCoTCfC2y0_WWKivuVc/edit?usp=sharing](https://drive.google.com/drive/folders/1cEoiz4s5EvmRFw47YhfBVIg-X-HxKFQt?usp=share_link))
 
 
+### Tech Stack
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+These are the primary frameworks and libraries used to implement the project.
+- **Javascript**
+- **Node.js**: v22.5.1
+- **Next.js**: v16.0.0
+- **Material UI**: v7.3.4
+- **MongoDB**: v6.20.0
+- **Mongoose**: v8.19.2
 
-## Getting Started
 
-First, run the development server:
+### Deployment
+The project was deployed through Vercel and can be accessed through the link [https://sim-plus.vercel.app](https://sim-plus.vercel.app).
+Pages are blocked for users not logged in, below are the credentials for a test account to log in and visualize the pages.
+
+```js
+email: associate@test.com
+password: passcode25$
+```
+
+
+### Running Locally
+
+Make sure you have [*yarn*](https://yarnpkg.com/getting-started/install) installed, then install the project dependencies with the command:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+yarn install
+```
+The project requires two env vars, create a file named `.env` and add the following var with your strings.
+```bash
+MONGODB_URI= string connection to your mongoDB databse
+JWT_SECRET= string secret
+```
+Finally run the project with:
+```bash
+yarn run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
