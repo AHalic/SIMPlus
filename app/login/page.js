@@ -4,10 +4,9 @@ import { OutlinedInput } from "@/components/OtulinedInput";
 import { EmailOutlined, LockOutline } from "@mui/icons-material";
 import { Button, Grid, InputAdornment, Typography } from "@mui/material";
 import { useState } from "react";
-import { FilledInput } from "@/components/FilledInputs";
 import Image from "next/image";
 import axios from "axios";
-import Router from "next/router";
+import { useRouter } from "next/navigation";
 
 /**
  * Login Page Component
@@ -25,6 +24,7 @@ export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
+    const router = useRouter();
 
 
     const handleSignIn = async() => {
@@ -34,8 +34,7 @@ export default function Login() {
             // Call backend login API with email + password
             const response = await axios.post('/api/login', { email, password });
             console.log('Login successful:', response.data);
-            Router.push('/main'); //to main page after login
-
+            router.push('/'); //to main page after login
         } catch (error) {
             // If login fails, set error message to display under inputs
             const message ="Wrong email or password";
@@ -107,6 +106,8 @@ export default function Login() {
                         <OutlinedInput 
                             label="Email" 
                             placeholder="you@email.com"
+                            onChange={(e) => setEmail(e.target.value)}
+                            error={!!errorMessage}
                             slotProps={{
                                 input: {
                                     startAdornment: (
@@ -120,13 +121,22 @@ export default function Login() {
                     </Grid>
 
                     <Grid width="100%">
-                        <FilledInput
+                        <OutlinedInput
                             label="Password"
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             placeholder="••••"
                             error={!!errorMessage} // highlight red if error exists
+                            slotProps={{
+                                input: {
+                                    startAdornment: (
+                                    <InputAdornment position="start">
+                                        <LockOutline sx={{ color: "divider" }} />
+                                    </InputAdornment>
+                                    ),
+                                },
+                            }}
                         />
                         {/* Error message displayed in red under inputs */}
                         {errorMessage && (
