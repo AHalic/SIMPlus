@@ -154,7 +154,25 @@ async function seed() {
     { transaction_id: ids[19], item_id: (await Item.findOne({ item_name: "Cola" }))._id, amount_sold: 2, sell_price: (await Item.findOne({ item_name: "Cola" })).cost },
     { transaction_id: ids[19], item_id: (await Item.findOne({ item_name: "Cheese" }))._id, amount_sold: 1, sell_price: (await Item.findOne({ item_name: "Cheese" })).cost }
   ];
-  await Item_Sold.insertMany(sold2);*/
+  await Item_Sold.insertMany(sold2);
+
+  const transac3 = [
+    { returned_id: null, payment_method: PaymentEnum[0] },
+    { returned_id: null, payment_method: PaymentEnum[2] }
+  ];
+  await Transaction.insertMany(transac3);
+
+  const transactions = await Transaction.find({}, "_id");
+  const ids = transactions.map(tx => tx._id);
+
+  const sold3 = [
+    { transaction_id: ids[20], item_id: (await Item.findOne({ item_name: "Backpack" }))._id, amount_sold: 1, sell_price: (await Item.findOne({ item_name: "Backpack" })).cost },
+    { transaction_id: ids[20], item_id: (await Item.findOne({ item_name: "Coffee Mug" }))._id, amount_sold: 1, sell_price: (await Item.findOne({ item_name: "Coffee Mug" })).cost },
+    { transaction_id: ids[20], item_id: (await Item.findOne({ item_name: "Coffee" }))._id, amount_sold: 8, sell_price: (await Item.findOne({ item_name: "Coffee" })).cost },
+    { transaction_id: ids[21], item_id: (await Item.findOne({ item_name: "Strawberries" }))._id, amount_sold: 10, sell_price: (await Item.findOne({ item_name: "Strawberries" })).cost },
+    { transaction_id: ids[21], item_id: (await Item.findOne({ item_name: "Water Bottle" }))._id, amount_sold: 1, sell_price: (await Item.findOne({ item_name: "Water Bottle" })).cost },
+  ];
+  await Item_Sold.insertMany(sold3);*/
 
   console.log("Test data inserted!");
 
