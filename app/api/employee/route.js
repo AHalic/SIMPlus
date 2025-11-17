@@ -21,11 +21,6 @@ import "dotenv/config";
 export async function POST(request) {
     const data = await request.json()
 
-    // return NextResponse.json(res, {
-    //     status: 201,
-    //     headers: { 'Content-Type': 'application/json' }
-    // });
-
     if (!data.first_name || !data.last_name || !data.email || !data.password || !data.dept_id || !data.role) {
         return NextResponse.json(
             { error: "Missing required fields" },

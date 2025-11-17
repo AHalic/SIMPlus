@@ -3,11 +3,46 @@
 import { OutlinedInput } from "@/components/OtulinedInput";
 import { EmailOutlined, LockOutline } from "@mui/icons-material";
 import { Button, Grid, InputAdornment, Typography } from "@mui/material";
+import { useState } from "react";
+import { FilledInput } from "@/components/FilledInputs";
 import Image from "next/image";
+import axios from "axios";
+import Router from "next/router";
 
+/**
+ * Login Page Component
+ *
+ * Renders the login form with email and password inputs,
+ * handles authentication via the `/api/login` endpoint,
+ * and redirects the user to the main page on success.
+ *
+ * Displays an inline error message in red if login fails.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered login page UI
+ */
 export default function Login() {
-    const handleSignIn = () => {
-        // TODO: handle signing
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
+
+
+    const handleSignIn = async() => {
+        setErrorMessage("");// clear any previous errors
+
+        try {
+            // Call backend login API with email + password
+            const response = await axios.post('/api/login', { email, password });
+            console.log('Login successful:', response.data);
+            Router.push('/main'); //to main page after login
+
+        } catch (error) {
+            // If login fails, set error message to display under inputs
+            const message ="Wrong email or password";
+            setErrorMessage(message);
+            console.log('Login failed:', error);
+        }
+        
     }
 
 
@@ -85,20 +120,20 @@ export default function Login() {
                     </Grid>
 
                     <Grid width="100%">
-                        <OutlinedInput 
-                            label="Password" 
-                            placeholder="••••"
+                        <FilledInput
+                            label="Password"
                             type="password"
-                            slotProps={{
-                                input: {
-                                    startAdornment: (
-                                    <InputAdornment position="start">
-                                        <LockOutline sx={{ color: "divider" }} />
-                                    </InputAdornment>
-                                    ),
-                                },
-                            }}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="••••"
+                            error={!!errorMessage} // highlight red if error exists
                         />
+                        {/* Error message displayed in red under inputs */}
+                        {errorMessage && (
+                            <Typography color="error" variant="body2">
+                                {errorMessage}
+                            </Typography>
+                        )}
                     </Grid>                    
                 </Grid>
 

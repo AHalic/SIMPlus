@@ -59,7 +59,7 @@ export async function GET(request) {
         const soldWeekAgg = await Item_Sold.aggregate([
             {
                 $match: {
-                    createdAt: { $gte: startOfWeek, $lte: endOfWeek }
+                    updatedAt: { $gte: startOfWeek, $lte: endOfWeek }
                 }
             },
             {

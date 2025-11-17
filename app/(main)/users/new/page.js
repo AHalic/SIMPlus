@@ -1,7 +1,7 @@
 "use client";
 
 import { OutlinedInput, OutlinedSelect } from "@/components/OtulinedInput";
-import { RoleEnum } from "@/models/Role";
+import { RoleEnum } from "@/models/Enum.js";
 import { Alert, Button, Grid, Snackbar, Typography } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -73,12 +73,15 @@ export default function NewUser() {
         <Grid 
 			container
 			direction="column"
-			padding="42px 52px"
+            justifyContent="center"
+            alignItems="center"
+			padding="32px 52px"
 			spacing={2}
 		>
             <Grid
                 container
                 padding="52px 64px"
+                size={{ xs: 10, xl: 6 }}
                 direction="column"
                 spacing={3}
                 sx={{
@@ -86,16 +89,21 @@ export default function NewUser() {
                     backgroundColor: 'secondary.main'
                 }}
             >
-                <Typography variant="h5" fontWeight={600}>
-                    Add New Employee
-                </Typography>
+                <Grid>
+                    <Typography variant="h5" fontWeight={600}>
+                        Add New Employee
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" mb={3}>
+                        Fill in the details below to create a new employee profile.
+                    </Typography>
+                </Grid>
 
 
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <Grid 
                         container
                         direction="column"
-                        spacing={4}
+                        spacing={1}
                     >
                         {/* Form inputs */}
                         <Grid container spacing={4} direction="column">
@@ -201,6 +209,7 @@ export default function NewUser() {
                                                 helperText={errors.password?.message}
                                                 fullWidth
                                                 onChange={onChange}
+                                                type="password"
                                                 onBlur={onBlur}
                                                 value={value}
                                                 inputRef={ref}
@@ -267,13 +276,13 @@ export default function NewUser() {
                         </Grid>
 
                         {/* Form button */}
-                        <Grid container direction="row" justifyContent="end" spacing={3}>
+                        <Grid container direction="row" alignItems="end" justifyContent="end" spacing={6}>
                             <Grid size={{ xs: 3 }} >
                                 <Button 
                                     variant="contained"
                                     onClick={onCancel}
                                     fullWidth
-                                    sx={{ backgroundColor: 'divider'}}
+                                    sx={{ backgroundColor: 'divider', textTransform: 'none'}}
                                     disabled={isSubmitLoading}
                                 >
                                     Reset form
@@ -285,7 +294,7 @@ export default function NewUser() {
                                     type="submit"
                                     variant="contained"
                                     fullWidth
-                                    sx={{ backgroundColor: 'success.main'}}
+                                    sx={{ backgroundColor: 'success.main', textTransform: 'none' }}
                                     disabled={isSubmitLoading}
                                 >
                                     Save

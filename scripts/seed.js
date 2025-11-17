@@ -3,7 +3,7 @@ import Item from "../models/Item.js";
 import Stock from "../models/Stock.js";
 import Transaction from "../models/Transaction.js";
 import Item_Sold from "../models/Item_Sold.js";
-import { PaymentEnum } from "../models/Payment_Method.js";
+import { PaymentEnum } from "../models/Enum.js";
 import mongoose from "mongoose";
 import "dotenv/config";
 
@@ -63,7 +63,7 @@ async function seed() {
     { returned_id: null, payment_method: PaymentEnum[1] },
     { returned_id: null, payment_method: PaymentEnum[0] }
   ];
-  await Transaction.insertMany(transac);*/
+  await Transaction.insertMany(transac);
 
   const transactions = await Transaction.find({}, "_id");
   const ids = transactions.map(tx => tx._id);
@@ -93,6 +93,68 @@ async function seed() {
     { transaction_id: ids[10], item_id: (await Item.findOne({ item_name: "Water Bottle" }))._id, amount_sold: 1, sell_price: (await Item.findOne({ item_name: "Water Bottle" })).cost },
   ];
   await Item_Sold.insertMany(sold);
+
+  const items2 = [
+    { item_name: "Cheese", type: "dairy", cost: 7.75, color: null, size: null },
+    { item_name: "Strawberries", type: "fruit", cost: 4.50, color: null, size: null },
+    { item_name: "Coffee", type: "drink", cost: 12.25, color: null, size: null },
+    { item_name: "Chicken", type: "meat", cost: 5.5, color: null, size: null },
+    { item_name: "Beef", type: "meat", cost: 6.25, color: null, size: null },
+    { item_name: "Bananas", type: "fruit", cost: 8.50, color: null, size: null },
+    { item_name: "Cola", type: "drink", cost: 2.50, color: null, size: null },
+    { item_name: "Lettuce", type: "vegetable", cost: 3.75, color: null, size: null },
+  ];
+  await Item.insertMany(items2);
+
+  const stock2 = [
+    { item_id: (await Item.findOne({ item_name: "Cheese" }))._id, dept_id: (await Department.findOne({ dept_name: "Food" }))._id, amount: 25 },
+    { item_id: (await Item.findOne({ item_name: "Strawberries" }))._id, dept_id: (await Department.findOne({ dept_name: "Food" }))._id, amount: 150 },
+    { item_id: (await Item.findOne({ item_name: "Coffee" }))._id, dept_id: (await Department.findOne({ dept_name: "Food" }))._id, amount: 50 },
+    { item_id: (await Item.findOne({ item_name: "Chicken" }))._id, dept_id: (await Department.findOne({ dept_name: "Food" }))._id, amount: 30 },
+    { item_id: (await Item.findOne({ item_name: "Beef" }))._id, dept_id: (await Department.findOne({ dept_name: "Food" }))._id, amount: 40 },
+    { item_id: (await Item.findOne({ item_name: "Bananas" }))._id, dept_id: (await Department.findOne({ dept_name: "Food" }))._id, amount: 60 },
+    { item_id: (await Item.findOne({ item_name: "Cola" }))._id, dept_id: (await Department.findOne({ dept_name: "Food" }))._id, amount: 120 },
+    { item_id: (await Item.findOne({ item_name: "Lettuce" }))._id, dept_id: (await Department.findOne({ dept_name: "Food" }))._id, amount: 50 },
+  ];
+  await Stock.insertMany(stock2);
+
+  const transac2 = [
+    { returned_id: null, payment_method: PaymentEnum[0] },
+    { returned_id: null, payment_method: PaymentEnum[0] },
+    { returned_id: null, payment_method: PaymentEnum[2] },
+    { returned_id: null, payment_method: PaymentEnum[2] },
+    { returned_id: null, payment_method: PaymentEnum[2] },
+    { returned_id: null, payment_method: PaymentEnum[1] },
+    { returned_id: null, payment_method: PaymentEnum[1] },
+    { returned_id: null, payment_method: PaymentEnum[1] },
+    { returned_id: null, payment_method: PaymentEnum[0] }
+  ];
+  await Transaction.insertMany(transac2);
+
+  const transactions = await Transaction.find({}, "_id");
+  const ids = transactions.map(tx => tx._id);
+
+  const sold2 = [
+    { transaction_id: ids[11], item_id: (await Item.findOne({ item_name: "Cheese" }))._id, amount_sold: 2, sell_price: (await Item.findOne({ item_name: "Cheese" })).cost },
+    { transaction_id: ids[11], item_id: (await Item.findOne({ item_name: "Beef" }))._id, amount_sold: 1, sell_price: (await Item.findOne({ item_name: "Beef" })).cost },
+    { transaction_id: ids[11], item_id: (await Item.findOne({ item_name: "Chicken" }))._id, amount_sold: 2, sell_price: (await Item.findOne({ item_name: "Chicken" })).cost },
+    { transaction_id: ids[12], item_id: (await Item.findOne({ item_name: "Coffee" }))._id, amount_sold: 1, sell_price: (await Item.findOne({ item_name: "Coffee" })).cost },
+    { transaction_id: ids[12], item_id: (await Item.findOne({ item_name: "Chicken" }))._id, amount_sold: 1, sell_price: (await Item.findOne({ item_name: "Chicken" })).cost },
+    { transaction_id: ids[13], item_id: (await Item.findOne({ item_name: "Cola" }))._id, amount_sold: 3, sell_price: (await Item.findOne({ item_name: "Cola" })).cost },
+    { transaction_id: ids[13], item_id: (await Item.findOne({ item_name: "Bananas" }))._id, amount_sold: 6, sell_price: (await Item.findOne({ item_name: "Bananas" })).cost },
+    { transaction_id: ids[13], item_id: (await Item.findOne({ item_name: "Lettuce" }))._id, amount_sold: 2, sell_price: (await Item.findOne({ item_name: "Lettuce" })).cost },
+    { transaction_id: ids[14], item_id: (await Item.findOne({ item_name: "Cola" }))._id, amount_sold: 6, sell_price: (await Item.findOne({ item_name: "Cola" })).cost },
+    { transaction_id: ids[15], item_id: (await Item.findOne({ item_name: "Coffee" }))._id, amount_sold: 1, sell_price: (await Item.findOne({ item_name: "Coffee" })).cost },
+    { transaction_id: ids[15], item_id: (await Item.findOne({ item_name: "Strawberries" }))._id, amount_sold: 3, sell_price: (await Item.findOne({ item_name: "Strawberries" })).cost },
+    { transaction_id: ids[16], item_id: (await Item.findOne({ item_name: "Chicken" }))._id, amount_sold: 2, sell_price: (await Item.findOne({ item_name: "Chicken" })).cost },
+    { transaction_id: ids[17], item_id: (await Item.findOne({ item_name: "Beef" }))._id, amount_sold: 1, sell_price: (await Item.findOne({ item_name: "Beef" })).cost },
+    { transaction_id: ids[17], item_id: (await Item.findOne({ item_name: "Strawberries" }))._id, amount_sold: 3, sell_price: (await Item.findOne({ item_name: "Strawberries" })).cost },
+    { transaction_id: ids[17], item_id: (await Item.findOne({ item_name: "Bananas" }))._id, amount_sold: 3, sell_price: (await Item.findOne({ item_name: "Bananas" })).cost },
+    { transaction_id: ids[18], item_id: (await Item.findOne({ item_name: "Lettuce" }))._id, amount_sold: 2, sell_price: (await Item.findOne({ item_name: "Lettuce" })).cost },
+    { transaction_id: ids[19], item_id: (await Item.findOne({ item_name: "Cola" }))._id, amount_sold: 2, sell_price: (await Item.findOne({ item_name: "Cola" })).cost },
+    { transaction_id: ids[19], item_id: (await Item.findOne({ item_name: "Cheese" }))._id, amount_sold: 1, sell_price: (await Item.findOne({ item_name: "Cheese" })).cost }
+  ];
+  await Item_Sold.insertMany(sold2);*/
 
   console.log("Test data inserted!");
 

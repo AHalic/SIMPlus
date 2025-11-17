@@ -1,10 +1,9 @@
-import { LogoutOutlined } from "@mui/icons-material";
-import { Divider, Drawer, List, Typography } from "@mui/material";
+import { InsertChartOutlined, LogoutOutlined, PeopleAltOutlined, PersonOutline } from "@mui/icons-material";
+import { Drawer, List, Typography } from "@mui/material";
 import Link from "next/link";
 import ListButton from "./ListButton";
+import BoxIcon from "./BoxIcon";
 
-
-// TODO: ugly
 export default function MenuDrawer({isOpenState}) {
     const [isMenuOpen, setIsMenuOpen] = isOpenState
 
@@ -23,41 +22,61 @@ export default function MenuDrawer({isOpenState}) {
             open={isMenuOpen}
             onClose={closeDrawer}
         >
-            <List>
+            <List
+                sx={{
+                    padding: 0,
+                    minWidth: "250px",
+                }}
+            >
                 <Typography 
                     sx={{
                         color: 'text.primary',
                         textAlign: "center",
                         fontWeight: "600",
                         fontSize: "18px",
-                        marginY: "16px"
+                        paddingY: "20px",
+                        backgroundColor: 'background.default',
                     }}
                 >
-                    Menu
+                    SIM+
                 </Typography>
 
-                {/* List Functions*/}
-                <Divider />
-                
+                <Link href="/"  passHref style={{ textDecoration: 'none' }}>
+                    <ListButton
+                        icon={<BoxIcon size={20} />}
+                        onClick={() => setIsMenuOpen(false)}
+                        text="Inventory"
+                        link="/"
+                    />
+                </Link>
+
+                <Link href="/report"  passHref style={{ textDecoration: 'none' }}>
+                    <ListButton
+                        icon={<InsertChartOutlined />}
+                        onClick={() => setIsMenuOpen(false)}
+                        text="Reports"
+                        link="/report"
+                    />
+                </Link>                
+
                 <Link href="/users/new"  passHref style={{ textDecoration: 'none' }}>
                     {/* TODO: remove after manage page is ready */}
                     <ListButton
                         onClick={() => setIsMenuOpen(false)}
                         text="Add Employee"
+                        link="/users/new"
                     />
                 </Link>
-
-                <Divider />
 
                 <Link href="/profile"  passHref style={{ textDecoration: 'none' }}>
                     <ListButton
                         onClick={() => setIsMenuOpen(false)}
                         disabled
                         text="Profile"
+                        link="/profile"
+                        icon={<PersonOutline />}
                     />
                 </Link>
-
-                <Divider />
 
                 <Link href="/users"  passHref style={{ textDecoration: 'none' }}>
                     {/* TODO: only for managers */}
@@ -65,10 +84,10 @@ export default function MenuDrawer({isOpenState}) {
                         disabled
                         onClick={() => setIsMenuOpen(false)}
                         text="Manage Employees"
+                        link="/users"
+                        icon={<PeopleAltOutlined />}
                     />
                 </Link>
-
-                <Divider />
 
                 <ListButton
                     icon={<LogoutOutlined />}
@@ -78,8 +97,6 @@ export default function MenuDrawer({isOpenState}) {
                         // TODO: logout and navigate back to main page after logout
                     }}
                 />
-
-                <Divider />
             </List>
         </Drawer>
     )

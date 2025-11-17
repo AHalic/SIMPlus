@@ -21,8 +21,7 @@ export default function Header () {
             direction="row"
             display="flex"
             width="100%"
-            borderBottom={`1px solid ${theme.palette.divider}`}
-            sx={{ backgroundColor: "secondary.main" }}
+            sx={{ backgroundColor: "primary.main" }}
         >
 
             <Grid style={{display: 'flex', alignItems: 'center'}}>
@@ -30,7 +29,7 @@ export default function Header () {
                     <Image
                         style={{cursor: 'pointer'}}
                         unselectable="on" 
-                        src={`/icon.svg`}
+                        src={`/icon-light.svg`}
                         height={40}
                         width={40}
                         alt="logo"
@@ -44,14 +43,14 @@ export default function Header () {
                     sx={{ 
                         padding: "8px", 
                         minWidth: "fit-content", 
-                        backgroundColor: "background.default",
+                        backgroundColor: "primary.main",
                         '&:hover': {
-                            backgroundColor: darken(theme.palette.background.default, 0.1)
+                            backgroundColor: darken(theme.palette.primary.main, 0.2)
                         }
                     }}
                     onClick={() => setIsMenuOpen(true)}
                 >
-                    <Menu sx={{color: "text.secondary"}}/>
+                    <Menu sx={{color: "secondary.main"}}/>
                 </Button>
             </Grid>
 

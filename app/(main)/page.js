@@ -1,7 +1,7 @@
 "use client";
 
 import StockListing, { StockListingSkeleton } from "@/components/StockListing";
-import { StyledSelect, StyledInput } from "@/components/StyledInputs";
+import { FilledSelect, FilledInput } from "@/components/FilledInputs";
 import { Search } from "@mui/icons-material";
 import { Alert, darken, Grid, IconButton, Snackbar, useTheme } from "@mui/material";
 import axios from "axios";
@@ -54,7 +54,7 @@ export default function Home() {
 		<Grid 
 			container
 			direction="column"
-			padding="40px 36px"
+			padding="16px 36px"
 			spacing={2}
 		>
 			{/* Search bar */}
@@ -68,7 +68,7 @@ export default function Home() {
 				}}
 			>
 				<Grid size={{ xs:4 }}>
-					<StyledSelect 
+					<FilledSelect 
 						label="Filter By Department" 
 						options={[
 							{value: "", label: "All"},
@@ -85,7 +85,7 @@ export default function Home() {
 				</Grid>
 
 				<Grid size={{ xs:8 }}>
-					<StyledInput 
+					<FilledInput 
 						label="Search By SKU"
 						endAdornment={
 							<IconButton
