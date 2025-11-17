@@ -1,20 +1,14 @@
 import { NextResponse } from "next/server";
-import Transaction from "../../../models/Transaction.js";
 import Item_Sold from "../../../models/Item_Sold.js";
-import Item from "../../../models/Item.js";
-import Stock from "../../../models/Stock.js";
 import mongoose from "mongoose";
 import "dotenv/config";
 
 /**
- * Employee GET route 
- * @param {start_date, end_date, dept_id?} request 
- * @returns NextReponse containing the total_sale, total_transaction, and avg_transaction, top_product
+ * Report Preview GET route 
+ * @param {*} request containing:
+ * start_date, end_date, dept_id, dept_name as search parameters
+ * @returns NextReponse containing the total_sale, total_transaction, and avg_transaction, top_product, dept_name, start_date, end_date
  */
-
-
-// Calculate and send total_sale, total_transaction, and avg_transaction, top_product.
-
 export async function GET(request) {
     const { start_date, end_date, dept_id, dept_name } = Object.fromEntries(request.nextUrl.searchParams);
     try {

@@ -5,9 +5,9 @@ import jwt from "jsonwebtoken";
 import "dotenv/config";
 
 /**
- * Employee GET route 
+ * Log in Route
  * @param {email, password} request 
- * @returns NextReponse containing Employee if authenticated
+ * @returns NextReponse containing Employee if authenticated and cookies with JWT token and role
  */
 
 export async function POST(request) {
