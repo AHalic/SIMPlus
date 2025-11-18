@@ -4,10 +4,9 @@ import { OutlinedInput } from "@/components/OtulinedInput";
 import { EmailOutlined, LockOutline } from "@mui/icons-material";
 import { Button, Grid, InputAdornment, Typography } from "@mui/material";
 import { useState } from "react";
-import { FilledInput } from "@/components/FilledInputs";
 import Image from "next/image";
 import axios from "axios";
-import Router from "next/router";
+import { useRouter } from "next/navigation";
 
 /**
  * Login Page Component
@@ -27,24 +26,48 @@ export default function Login() {
     const [errorMessage, setErrorMessage] = useState("");
 
 
-    const handleSignIn = async() => {
-        setErrorMessage("");// clear any previous errors
+    const router = useRouter(); 
 
-        try {
-            // Call backend login API with email + password
-            const response = await axios.post('/api/login', { email, password });
-            console.log('Login successful:', response.data);
-            Router.push('/main'); //to main page after login
+  const handleSignIn = async () => {
+    // clear any previous errors
+    setErrorMessage("");
 
-        } catch (error) {
-            // If login fails, set error message to display under inputs
-            const message ="Wrong email or password";
-            setErrorMessage(message);
-            console.log('Login failed:', error);
-        }
-        
+    // simple front-end validation
+    if (!email || !password) {
+      setErrorMessage("Please enter both email and password");
+      return;
     }
 
+    try {
+      // Call backend login API with email + password
+      const response = await axios.post("api/login", { email, password });
+
+      console.log("Login successful:", response.data);
+      router.push("/"); // Navigate to main page on success
+      console.log("Login successful");
+    } catch (error) {
+      console.log("Login failed:", error);
+
+      let message = "Wrong email or password";
+
+      // error handling
+      if (axios.isAxiosError(error) && error.response) {
+        const { status, data } = error.response;
+        console.log("Login API error status/data:", status, data);
+
+        if (data?.error) {
+        
+          message = data.error;
+        } else if (data?.message) {
+          message = data.message;
+        } else if (status === 500) {
+          message = "Something went wrong on the server";
+        }
+      }
+
+      setErrorMessage(message);
+    }
+  };
 
     return (
         <Grid container 
@@ -107,12 +130,14 @@ export default function Login() {
                         <OutlinedInput 
                             label="Email" 
                             placeholder="you@email.com"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             slotProps={{
-                                input: {
-                                    startAdornment: (
-                                    <InputAdornment position="start">
-                                        <EmailOutlined sx={{ color: "divider" }} />
-                                    </InputAdornment>
+                            input: {
+                            startAdornment: (
+                            <InputAdornment position="start">
+                                <EmailOutlined sx={{ color: "divider" }} />
+                            </InputAdornment>
                                     ),
                                 },
                             }}
@@ -120,7 +145,7 @@ export default function Login() {
                     </Grid>
 
                     <Grid width="100%">
-                        <FilledInput
+                        <OutlinedInput
                             label="Password"
                             type="password"
                             value={password}
