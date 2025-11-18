@@ -1,20 +1,15 @@
 import { NextResponse } from "next/server";
 import Item_Sold from "../../../../models/Item_Sold.js";
-import Item from "../../../../models/Item.js";
-import Stock from "../../../../models/Stock.js";
 import mongoose from "mongoose";
 import "dotenv/config";
 import * as XLSX from "xlsx";
 
 /**
- * Employee GET route 
- * @param {start_date, end_date, dept_id?, bool{best_worst_seller, rev, forecast{day, week, month, year}, period, send_to_email}} request 
- * @returns NextReponse containing the FILE
+ * Report Download POST route
+ * @param {*} request containing:
+ *  start_date, end_date, dept_id, period_slice, include_best_worst_seller, include_revenue, include_forecast, period_forecast, send_to_email
+ * @returns NextReponse containing a XLSX FILE
  */
-
-// Download and maybe email file.
-
-
 export async function POST(request) {
     const { start_date, end_date, dept_id, period_slice, include_best_worst_seller, include_revenue,
         include_forecast, period_forecast, send_to_email } = await request.json();
