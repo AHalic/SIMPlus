@@ -3,6 +3,8 @@ import Item_Sold from "../../../../models/Item_Sold.js";
 import mongoose from "mongoose";
 import "dotenv/config";
 import * as XLSX from "xlsx";
+import nodemailer from "nodemailer";
+import { cookies } from "next/headers";
 
 /**
  * Report Download POST route
@@ -184,8 +186,38 @@ export async function POST(request) {
             XLSX.utils.book_append_sheet(workbook, ws4, "Forecast");
         }
 
-
+        // Generate buffer
         const buffer = XLSX.write(workbook, { type: "buffer", bookType: "xlsx" });
+
+        // Send to email if requested
+        if (send_to_email) {
+            const now = new Date();
+            const formattedDate = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
+            const receiver_email = cookies().get("email")?.value;
+
+            const transporter = nodemailer.createTransport({
+                service: "gmail",
+                auth: {
+                    user: process.env.EMAIL_UN,
+                    pass: process.env.EMAIL_PASS,
+                },
+            });
+
+            await transporter.sendMail({
+                from: process.env.EMAIL_UN,
+                to: receiver_email,
+                subject: "Report for" + formattedDate,
+                text: "Attached is your report.",
+                attachments: [
+                    {
+                        filename: "Report.xlsx",
+                        content: buffer,
+                    },
+                ],
+            });
+        }
+
+        // Return Excel file as response
         return new NextResponse(buffer, {
             status: 200,
             headers: {
