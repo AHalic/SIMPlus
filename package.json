@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "test": "jest"
   },
   "dependencies": {
     "@emotion/cache": "^11.14.0",
@@ -28,5 +29,11 @@
     "react-dom": "19.2.0",
     "react-hook-form": "^7.66.0",
     "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.5",
+    "typescript": "^5.9.3"
   }
 }

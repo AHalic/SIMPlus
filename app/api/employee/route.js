@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import mongoose from "mongoose";
 import Employee from "../../../models/Employee.js";
 import "dotenv/config";
+import { validateEmployeeData } from "./validation";
 
 
 /**
@@ -27,6 +28,14 @@ export async function POST(request) {
             { status: 400 }
         );
     }
+    //run backend validation (length, format, etc.)
+    const { valid, errors } = validateEmployeeData(data);
+    if (!valid) {
+        return NextResponse.json(
+            { error: "Validation failed", errors },
+            { status: 400 }
+        );
+        }
 
     try {
         if (mongoose.connection.readyState === 0) {
