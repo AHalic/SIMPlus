@@ -1,12 +1,23 @@
-import { InsertChartOutlined, LogoutOutlined, PeopleAltOutlined, PersonOutline } from "@mui/icons-material";
+import { AddToPhotosOutlined, InsertChartOutlined, LogoutOutlined, PeopleAltOutlined, PersonOutline } from "@mui/icons-material";
 import { Drawer, List, Typography } from "@mui/material";
 import Link from "next/link";
 import ListButton from "./ListButton";
 import BoxIcon from "./BoxIcon";
-import { signOut } from "@/app/actions";
+import { getCookies, signOut } from "@/app/actions";
+import { useEffect, useState, useTransition } from "react";
 
 export default function MenuDrawer({isOpenState}) {
     const [isMenuOpen, setIsMenuOpen] = isOpenState
+
+    const [cookies, setCookies] = useState();
+    const [isPending, startTransition] = useTransition()
+
+    useEffect(() => {
+        startTransition(async () => {
+            const cookie = await getCookies()
+            setCookies(cookie)
+        })
+    }, [])
 
     
     const closeDrawer = (event) => {
@@ -61,13 +72,6 @@ export default function MenuDrawer({isOpenState}) {
                     />
                 </Link>                
 
-                <Link href="/users/new"  passHref style={{ textDecoration: 'none' }}>
-                    <ListButton
-                        onClick={() => setIsMenuOpen(false)}
-                        text="Add Employee"
-                        link="/users/new"
-                    />
-                </Link>
 
                 <Link href="/profile"  passHref style={{ textDecoration: 'none' }}>
                     <ListButton
@@ -79,15 +83,37 @@ export default function MenuDrawer({isOpenState}) {
                     />
                 </Link>
 
-                <Link href="/users"  passHref style={{ textDecoration: 'none' }}>
+                {/* TODO: remove after implementing list of users page */}
+                <Link href="/users/new"  passHref style={{ textDecoration: 'none' }}>
                     <ListButton
-                        disabled
                         onClick={() => setIsMenuOpen(false)}
-                        text="Manage Employees"
-                        link="/users"
-                        icon={<PeopleAltOutlined />}
+                        text="Add Employee"
+                        link="/users/new"
                     />
                 </Link>
+
+                {cookies?.role === 'Manager' && (
+                    <>
+                        <Link href="/users"  passHref style={{ textDecoration: 'none' }}>
+                            <ListButton
+                                disabled
+                                onClick={() => setIsMenuOpen(false)}
+                                text="Manage Employees"
+                                link="/users"
+                                icon={<PeopleAltOutlined />}
+                            />
+                        </Link>
+
+                        <Link href="items/new" passHref style={{ textDecoration: 'none' }}>
+                            <ListButton
+                                onClick={() => setIsMenuOpen(false)}
+                                text="Mass Item Addition"
+                                link="/items/new"
+                                icon={<AddToPhotosOutlined />}
+                            />
+                        </Link>
+                    </>
+                )}
 
                 <form id="signout-form" action={signOut}>
                     <ListButton

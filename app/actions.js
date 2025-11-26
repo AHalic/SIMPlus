@@ -12,3 +12,12 @@ export async function signOut() {
     
     redirect('/login')
 }
+
+export async function getCookies() {
+    const cookieStore = await cookies()
+    return {
+        token: cookieStore.get("token")?.value,
+        email: cookieStore.get("email")?.value,
+        role: cookieStore.get("role")?.value,
+    }
+}
