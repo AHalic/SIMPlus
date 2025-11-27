@@ -161,7 +161,11 @@ export default function MassItemAddition() {
 
                 {items.length > 0 && (
                     <Grid>
-                        <CompleteInsertTableItems items={items} />
+                        <CompleteInsertTableItems 
+                            items={items}
+                            header={Object.keys(schema).map(key => key.replace('_', ' ').toUpperCase())}
+                            properties={Object.keys(schema)}
+                        />
 
                         <Button
                             variant="contained"
