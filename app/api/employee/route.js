@@ -65,3 +65,46 @@ export async function POST(request) {
         );
     }
 }
+
+export async function GET(request) {
+    try {
+        if (mongoose.connection.readyState === 0) {
+            await mongoose.connect(process.env.MONGODB_URI, {
+                useNewUrlParser: true,
+                useUnifiedTopology: true,
+            });
+        }
+        const employees = await Employee.aggregate([
+                {
+                    $lookup: {
+                        from: "Department",
+                        localField: "dept_id",
+                        foreignField: "_id",
+                        as: "department_info"
+                    },
+
+                },
+                { $unwind: "$department_info" },
+                {
+                    $project: {
+                        first_name: 1,
+                        last_name: 1,
+                        email: 1,
+                        role: 1,
+                        dept_name: "$department_info.dept_name"
+                    }
+                }
+            ])
+            // .select('-password_hash');
+        
+        return NextResponse.json({employees}, {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+        });
+    } catch (error) {
+        return NextResponse.json(
+            { error: "Failed to fetch employees", details: error.message },
+            { status: 500 }
+        );
+    }
+}
