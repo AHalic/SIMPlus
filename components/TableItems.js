@@ -74,7 +74,7 @@ export function CompleteInsertTableItems({ items, header=[], properties=[] }) {
                 borderRadius: "12px",
                 border: '1px solid',
                 borderColor: 'divider',
-                padding: '18px 12px'
+                padding: '4px 12px'
             }}
         >
             <TableContainer>

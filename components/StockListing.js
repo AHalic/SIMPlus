@@ -57,21 +57,23 @@ function NoStock () {
     )
 }
 
-function StockListingSkeleton () {
+function StockListingSkeleton ({ showTitle = true }) {
     return (
         <Grid
             container
             spacing={2}
             sx={{
-                padding: "20px",
+                padding: showTitle ? "20px" : "0px",
                 backgroundColor:"secondary.main",
                 borderRadius: "12px",
             }}
             direction="column"
         >
-            <Grid size={{ xs: 3 }}>
-                <Skeleton variant="text" sx={{ fontSize: '1.5rem' }} />
-            </Grid>
+            {showTitle && (
+                <Grid size={{ xs: 3 }}>
+                    <Skeleton variant="text" sx={{ fontSize: '1.5rem' }} />
+                </Grid>
+            )}
 
             <Grid 
                 container
