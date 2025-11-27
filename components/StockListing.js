@@ -8,6 +8,7 @@ export default function StockListing ({ stock }) {
             {stock?.length > 0 ? 
                 stock?.map((department) => (
                     <Grid
+                        size={{ xs:12, xl:10 }}
                         key={department.dept_id}
                         container
                         spacing={2}
@@ -40,6 +41,7 @@ function NoStock () {
     return (
         <Grid
             container
+            size={{ xs:12, xl:10 }}
             spacing={2}
             direction="column"
             justifyContent="center"
@@ -62,6 +64,7 @@ function StockListingSkeleton ({ showTitle = true }) {
         <Grid
             container
             spacing={2}
+            size={{ xs:12, xl:10 }}
             sx={{
                 padding: showTitle ? "20px" : "0px",
                 backgroundColor:"secondary.main",

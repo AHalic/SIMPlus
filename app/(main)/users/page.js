@@ -2,8 +2,8 @@
 
 import { StockListingSkeleton } from "@/components/StockListing";
 import { CompleteInsertTableItems } from "@/components/TableItems";
-import { ManageAccounts } from "@mui/icons-material";
-import { Alert, Grid, IconButton, Snackbar, Typography } from "@mui/material";
+import { Add, ManageAccounts } from "@mui/icons-material";
+import { Alert, Button, Grid, IconButton, Snackbar, Typography } from "@mui/material";
 import axios from "axios";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -34,8 +34,10 @@ export default function UsersListPage() {
             container
             paddingX="32px"
             spacing={2}
+            justifyContent="center"
         >
             <Grid
+                size={{ xs: 12, xl: 10 }}
                 container
                 direction="column"
                 spacing={2}
@@ -47,13 +49,23 @@ export default function UsersListPage() {
                 }}
             >
                 {/* title */}
-                <Grid>
-                    <Typography variant="h6" fontWeight={600}>
-                        Users Management
-                    </Typography>
-                    <Typography variant="subtitle1" color="text.secondary">
-                        View and manage employee profiles
-                    </Typography>
+                <Grid direction="row" container justifyContent="space-between" alignItems="center">
+                    <Grid>
+                        <Typography variant="h6" fontWeight={600}>
+                            Users Management
+                        </Typography>
+                        <Typography variant="subtitle1" color="text.secondary">
+                            View and manage employee profiles
+                        </Typography>
+                    </Grid>
+
+                    <Grid>
+                        <Link href="/users/new" passHref>
+                            <Button variant="contained" color="success" startIcon={<Add />}>
+                                Add New User
+                            </Button>
+                        </Link>
+                    </Grid>
                 </Grid>
 
                 {isLoading ? (

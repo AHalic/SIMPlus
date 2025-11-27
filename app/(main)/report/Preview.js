@@ -6,7 +6,8 @@ export default function Preview({ data, isLoading }) {
     const theme = useTheme();
 
     return (
-        <Box
+        <Grid
+            size={{ xs: 12, xl: 10 }}
             sx={{
                 backgroundColor: 'secondary.main',
                 width: '100%',
@@ -159,6 +160,6 @@ export default function Preview({ data, isLoading }) {
 
 
             </Box>
-        </Box>
+        </Grid>
     )
 }

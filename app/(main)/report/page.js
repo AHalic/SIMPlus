@@ -123,9 +123,11 @@ export default function Report() {
             container
             paddingX="32px"
             spacing={2}
+            justifyContent="center"
         >
             <Grid
                 container
+                size={{ xs: 12, xl: 10 }}
                 direction="column"
                 spacing={1}
                 sx={{

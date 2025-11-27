@@ -113,11 +113,13 @@ export default function MassItemAddition() {
             container
             paddingX="32px"
             spacing={2}
+            justifyContent="center"
         >
             <Grid
+                size={{ xs: 12, xl: 10 }}
                 container
                 direction="column"
-                spacing={1}
+                spacing={2}
                 sx={{
                     backgroundColor: 'secondary.main',
                     width: '100%',
@@ -140,9 +142,10 @@ export default function MassItemAddition() {
 
 
             <Grid
+                size={{ xs: 12, xl: 10 }}
                 container
                 direction="column"
-                spacing={1}
+                spacing={2}
                 sx={{
                     backgroundColor: 'secondary.main',
                     width: '100%',
