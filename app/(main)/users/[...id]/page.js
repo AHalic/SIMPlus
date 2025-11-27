@@ -2,26 +2,30 @@
 
 import { OutlinedInput, OutlinedSelect } from "@/components/OtulinedInput";
 import { RoleEnum } from "@/models/Enum.js";
-import { Alert, Button, Grid, Snackbar, Typography } from "@mui/material";
+import { Alert, Button, CircularProgress, Grid, Snackbar, Typography } from "@mui/material";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { use, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 
-const defaultValues = {
-    first_name: "",
-    last_name: "",
-    email: "",
-    password: "",
-    dept_id: "",
-    role: ""
-}
+export default function UserProfile({ params }) {
+    const id = use(params).id ? use(params).id[0] : null
 
-export default function NewUser() {
+    const [defaultValues, setDefaultValues] = useState({
+        first_name: "",
+        last_name: "",
+        email: "",
+        password: "",
+        dept_id: "",
+        role: ""
+    })
     const [departments, setDepartments] = useState([])
     const [isSubmitLoading, setIsSubmitLoading] = useState(false)
-    const [isSuccessSnackbarOpen, setIsSuccessSnackbarOpenSnackbar] = useState(false)
+    const [isSuccessSnackbarOpen, setIsSuccessSnackbarOpen] = useState(false)
     const [isErrorSnackbarOpen, setIsErrorSnackbarOpen] = useState()
+
+    const router = useRouter()
 
     const {
         control,
@@ -39,8 +43,31 @@ export default function NewUser() {
         await axios.post('/api/employee', data)
             .then((response) => {
                     setIsSubmitLoading(false)
-                    setIsSuccessSnackbarOpenSnackbar(true)
+                    setIsSuccessSnackbarOpen(true)
                     reset(defaultValues)
+                    router.push(`/users/${response.data._id}`)
+                })
+                .catch((error) => {
+                    setIsErrorSnackbarOpen(error.response?.data?.error || error.message || 'Something went wrong')
+                    setIsSubmitLoading(false)
+                    console.log(error)
+                })        
+    }
+
+    const onUpdate = async (data) => {
+        setIsSubmitLoading(true)
+        
+        const formattedData = {
+            email: data.email,
+            dept_id: data.dept_id,
+            role: data.role,
+            password: data.password,
+        }
+
+        await axios.put(`/api/employee/${id}`, formattedData)
+            .then((response) => {
+                    setIsSubmitLoading(false)
+                    setIsSuccessSnackbarOpen(true)
                 })
                 .catch((error) => {
                     setIsErrorSnackbarOpen(error.response?.data?.error || error.message || 'Something went wrong')
@@ -67,6 +94,25 @@ export default function NewUser() {
             })
     }, [])
 
+    useEffect(() => {
+        if (id != null && id !== 'new') {
+            axios.get(`/api/employee/${id}`)
+                .then((response) => {
+                    const empData = response.data.employee
+                    setDefaultValues({
+                        ...empData,
+                    })
+                    reset({
+                        ...empData,
+                    })
+                })
+                .catch((error) => {
+                    console.log(error)
+                    setIsErrorSnackbarOpen(error.response?.data?.error || error.message || 'Something went wrong when getting User data')
+                })
+        }
+    }, [id])
+
 
 
     return (
@@ -83,6 +129,7 @@ export default function NewUser() {
                 padding="52px 64px"
                 size={{ xs: 10, xl: 6 }}
                 direction="column"
+                justifyContent="center"
                 spacing={3}
                 sx={{
                     borderRadius: '12px',
@@ -91,15 +138,16 @@ export default function NewUser() {
             >
                 <Grid>
                     <Typography variant="h5" fontWeight={600}>
-                        Add New Employee
+                        {id === 'new' ? 'Add New Employee' : 'Edit Employee'}
                     </Typography>
                     <Typography variant="body2" color="text.secondary" mb={3}>
-                        Fill in the details below to create a new employee profile.
+                        {id === 'new' ? 
+                            'Fill in the details below to create a new employee profile.' 
+                            : 'Update the details below to edit the employee profile.'}
                     </Typography>
                 </Grid>
 
-
-                <form onSubmit={handleSubmit(onSubmit)}>
+                <form onSubmit={handleSubmit(id === 'new' ? onSubmit : onUpdate)}>
                     <Grid 
                         container
                         direction="column"
@@ -120,6 +168,7 @@ export default function NewUser() {
                                         }}
                                         render={({ field : { onChange, onBlur, value, ref } }) => (
                                             <OutlinedInput 
+                                                disabled={id !== 'new'}
                                                 error={!!errors.first_name}
                                                 helperText={errors.first_name?.message}
                                                 fullWidth
@@ -145,6 +194,7 @@ export default function NewUser() {
                                         }}
                                         render={({ field : { onChange, onBlur, value, ref } }) => (
                                             <OutlinedInput 
+                                                disabled={id !== 'new'}
                                                 error={!!errors.last_name}
                                                 helperText={errors.last_name?.message}
                                                 fullWidth
@@ -190,18 +240,19 @@ export default function NewUser() {
                                     <Controller
                                         name={`password`}
                                         control={control}
-                                        rules={{ 
-                                            required: "Field required", 
-                                            maxLength: { value: 20, message: "Password has to be at most 20 characters" }, 
-                                            minLength: { value: 8, message: "Password has to be at least 8 characters" },
-                                            validate: {
-                                                checkFormat: async (password) => {
-                                                    //  at least a letter, a special character and a number;
-                                                    const regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).+$/;
+                                        rules={{
+                                            validate: (password) => {
+                                                if (id !== 'new' && (!password || password.length === 0)) return true
 
-                                                    if (!regex.test(password)) return "Password has to have at least a letter, a special character and a number"
-                                                },
-                                            }                                            
+                                                if (!password) return "Field required"
+                                                if (password.length < 8) return "Password has to be at least 8 characters"
+                                                if (password.length > 20) return "Password has to be at most 20 characters"
+
+                                                const regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).+$/
+                                                if (!regex.test(password)) return "Password has to have at least a letter, a special character and a number"
+
+                                                return true
+                                            }
                                         }}
                                         render={({ field : { onChange, onBlur, value, ref } }) => (
                                             <OutlinedInput 
@@ -310,10 +361,10 @@ export default function NewUser() {
             <Snackbar
                 open={isSuccessSnackbarOpen}
                 autoHideDuration={1200}
-                onClose={() => setIsSuccessSnackbarOpenSnackbar(false)}
+                onClose={() => setIsSuccessSnackbarOpen(false)}
             >
                 <Alert
-                    onClose={() => setIsSuccessSnackbarOpenSnackbar(false)}
+                    onClose={() => setIsSuccessSnackbarOpen(false)}
                     severity="success"
                     variant="filled"
                     sx={{ width: '100%' }}

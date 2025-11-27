@@ -2,7 +2,7 @@
 
 import { StockListingSkeleton } from "@/components/StockListing";
 import { CompleteInsertTableItems } from "@/components/TableItems";
-import { Add, ManageAccounts } from "@mui/icons-material";
+import { Add, Delete, ManageAccounts } from "@mui/icons-material";
 import { Alert, Button, Grid, IconButton, Snackbar, Typography } from "@mui/material";
 import axios from "axios";
 import Link from "next/link";
@@ -28,6 +28,16 @@ export default function UsersListPage() {
             });
     }, []);
 
+    const handleDelete = (id) => {
+        axios.delete(`/api/employee/${id}`)
+            .then(response => {
+                setEmployees(prevEmployees => prevEmployees.filter(emp => emp._id !== id));
+            })
+            .catch(error => {
+                console.error("There was an error deleting the employee!", error);
+                setIsErrorSnackbarOpen(error.response?.data?.error || error.message || 'Something went wrong');
+            });
+    };
 
     return (
         <Grid 
@@ -77,11 +87,17 @@ export default function UsersListPage() {
                         items={employees.map(emp => ({
                             ...emp,
                             icon: (
-                                <Link href={`/users/${emp._id}`} passHref>
-                                    <IconButton color="primary">
-                                        <ManageAccounts />
+                                <>
+                                    <Link href={`/users/${emp._id}`} passHref>
+                                        <IconButton color="primary">
+                                            <ManageAccounts />
+                                        </IconButton>
+                                    </Link>
+
+                                    <IconButton color="error" onClick={() => handleDelete(emp._id)}>
+                                        <Delete />
                                     </IconButton>
-                                </Link>
+                                </>
                             ),
                             name: `${emp.first_name} ${emp.last_name}`,
                         }))}
