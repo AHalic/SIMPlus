@@ -25,7 +25,6 @@ export default function Login() {
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
 
-
     const router = useRouter(); 
 
   const handleSignIn = async () => {
@@ -44,7 +43,6 @@ export default function Login() {
 
       console.log("Login successful:", response.data);
       router.push("/"); // Navigate to main page on success
-      console.log("Login successful");
     } catch (error) {
       console.log("Login failed:", error);
 
@@ -152,6 +150,15 @@ export default function Login() {
                             onChange={(e) => setPassword(e.target.value)}
                             placeholder="••••"
                             error={!!errorMessage} // highlight red if error exists
+                            slotProps={{
+                            input: {
+                            startAdornment: (
+                                    <InputAdornment position="start">
+                                        <LockOutline sx={{ color: "divider" }} />
+                                    </InputAdornment>
+                                    ),
+                                },
+                            }}
                         />
                         {/* Error message displayed in red under inputs */}
                         {errorMessage && (
