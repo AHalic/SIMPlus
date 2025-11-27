@@ -179,10 +179,10 @@ export default function MassItemAddition() {
             <Snackbar
                 open={isSuccessSnackbarOpen}
                 autoHideDuration={1200}
-                onClose={() => setIsSuccessSnackbarOpenSnackbar(false)}
+                onClose={() => setIsSuccessSnackbarOpen(false)}
             >
                 <Alert
-                    onClose={() => setIsSuccessSnackbarOpenSnackbar(false)}
+                    onClose={() => setIsSuccessSnackbarOpen(false)}
                     severity="success"
                     variant="filled"
                     sx={{ width: '100%' }}
