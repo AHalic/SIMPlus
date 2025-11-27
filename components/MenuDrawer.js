@@ -94,9 +94,8 @@ export default function MenuDrawer({isOpenState}) {
 
                 {cookies?.role === 'Manager' && (
                     <>
-                        <Link href="/users"  passHref style={{ textDecoration: 'none' }}>
+                        <Link href="/users" passHref style={{ textDecoration: 'none' }}>
                             <ListButton
-                                disabled
                                 onClick={() => setIsMenuOpen(false)}
                                 text="Manage Employees"
                                 link="/users"
