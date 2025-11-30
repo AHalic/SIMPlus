@@ -72,11 +72,13 @@ export async function POST(request) {
                 groupId = {
                     year: { $year: "$updatedAt" },
                     month: { $month: "$updatedAt" },
+                    week: { $week: "$updatedAt" },
                     day: { $dayOfMonth: "$updatedAt" }
                 };
             } else if (period_slice === "Week") {
                 groupId = {
                     year: { $year: "$updatedAt" },
+                    month: { $month: "$updatedAt" },
                     week: { $week: "$updatedAt" }
                 };
             } else if (period_slice === "Month") {
@@ -117,7 +119,7 @@ export async function POST(request) {
             if (groupId) {
                 revenue_sheet = revenue.map(r => ({
                     ...r._id,
-                    total_revenue: r.total_revenue
+                    "Revenue": r.total_revenue
                 }));
             } else {
                 revenue_sheet = [{ total_revenue: revenue[0]?.total_revenue || 0 }];
@@ -137,6 +139,15 @@ export async function POST(request) {
                         total_quantity: { $sum: "$amount_sold" }
                     }
                 },
+                {
+                    $lookup: {
+                        from: "Item",
+                        localField: "_id",
+                        foreignField: "_id",
+                        as: "item"
+                    }
+                },
+                { $unwind: "$item" },
                 { $sort: { total_sold_value: -1 } }
             ];
 
@@ -144,9 +155,10 @@ export async function POST(request) {
 
             // Format value for Excel sheet
             const best_seller_value_sheet = bestSellerValue.map(item => ({
-                item_id: item._id,
-                total_sold_value: item.total_sold_value,
-                total_quantity: item.total_quantity
+                "SKU": item._id.toString(),
+                "Item Name": item.item.item_name,
+                "Total Value Sold": item.total_sold_value,
+                "Total Quantity Sold": item.total_quantity
             }));
             const ws2 = XLSX.utils.json_to_sheet(best_seller_value_sheet);
             XLSX.utils.book_append_sheet(workbook, ws2, "Best Seller By Value");
@@ -163,6 +175,15 @@ export async function POST(request) {
                         total_sold_value: { $sum: { $multiply: ["$amount_sold", "$sell_price"] } }
                     }
                 },
+                {
+                    $lookup: {
+                        from: "Item",
+                        localField: "_id",
+                        foreignField: "_id",
+                        as: "item"
+                    }
+                },
+                { $unwind: "$item" },
                 { $sort: { total_quantity: -1 } }
             ];
 
@@ -170,9 +191,10 @@ export async function POST(request) {
 
             // Format quantity for Excel sheet
             const best_seller_quantity_sheet = bestSellerQuantity.map(item => ({
-                item_id: item._id,
-                total_quantity: item.total_quantity,
-                total_sold_value: item.total_sold_value
+                "SKU": item._id.toString(),
+                "Item Name": item.item.item_name,
+                "Total Quantity Sold": item.total_quantity,
+                "Total Value Sold": item.total_sold_value
             }));
             const ws3 = XLSX.utils.json_to_sheet(best_seller_quantity_sheet);
             XLSX.utils.book_append_sheet(workbook, ws3, "Best Seller By Quantity");
