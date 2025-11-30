@@ -212,20 +212,28 @@ export async function POST(request) {
         }
 
         // FORECAST
-        if (include_forecast == true) {
-            let forecast_sheet = [];
+        try {
+            if (include_forecast == true) {
+                let forecast_sheet = [];
 
-            const regression = new PolynomialRegression(X, Y, 2);
-            const nextPeriod = X.length + 1;
-            const forecast = regression.predict(nextPeriod);
+                const regression = new PolynomialRegression(X, Y, 2);
+                const nextPeriod = X.length + 1;
+                const forecast = regression.predict(nextPeriod).toFixed(2);
 
-            forecast_sheet.push({
-                "Period": `Next (${nextPeriod})`,
-                "Forecasted Revenue": forecast
-            });
+                forecast_sheet.push({
+                    "Period": `Next (${nextPeriod})`,
+                    "Forecasted Revenue": forecast
+                });
 
-            const ws4 = XLSX.utils.json_to_sheet(forecast_sheet);
-            XLSX.utils.book_append_sheet(workbook, ws4, "Forecast");
+                const ws4 = XLSX.utils.json_to_sheet(forecast_sheet);
+                XLSX.utils.book_append_sheet(workbook, ws4, "Forecast");
+            }
+        } catch (error) {
+            console.error("Error generating report:", error);
+            return NextResponse.json(
+                { error: "Not enough data to generate a forecast.", details: error.message },
+                { status: 500 }
+            );
         }
 
         // Generate buffer
