@@ -1,6 +1,10 @@
-import { Chip, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+"use client";
+
+import { Chip, Grid, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TablePagination, TableRow } from "@mui/material";
+import { useState } from "react";
 
 export default function TableItems({ items }) {
+    // TODO: make table generic
     return (
         <Grid 
             container
@@ -54,6 +58,85 @@ export default function TableItems({ items }) {
                             </TableRow>
                         ))}
                     </TableBody>
+                </Table>
+            </TableContainer>            
+        </Grid>
+    )
+}
+
+export function CompleteInsertTableItems({ items, header=[], properties=[] }) {
+    const [page, setPage] = useState(0);
+
+    return (
+        <Grid 
+            container
+            sx={{
+                borderRadius: "12px",
+                border: '1px solid',
+                borderColor: 'divider',
+                padding: '4px 12px'
+            }}
+        >
+            <TableContainer>
+                <Table>
+                    <TableHead>
+                        <TableRow 
+                            sx={{   
+                                '&:last-child th': {
+                                    borderBottom: '0.5px solid',
+                                    borderColor: 'divider'
+                                }, 
+                            }}
+                        >
+                            
+                            {header.map((head, index) => (
+                                <TableCell 
+                                    key={index}
+                                    align={index === 0 ? "left" : "right"}
+                                >
+                                    {head}
+                                </TableCell>
+                            ))}
+                        </TableRow>
+                    </TableHead>
+
+
+                    <TableBody>
+                        {items.slice(page * 10, page * 10 + 10)
+                            .map((it, index) => (
+                                <TableRow key={index}>
+                                    {properties.map((prop, propIndex) => (
+                                        <TableCell 
+                                            align={propIndex === 0 ? "left" : "right"}
+                                            key={propIndex}
+                                        >
+                                            {it[prop]}
+                                        </TableCell>
+                                    ))}
+                                </TableRow>
+                        ))}
+                    </TableBody>
+
+                    <TableFooter>
+                        <TableRow align="right">
+                            <TablePagination
+                                rowsPerPageOptions={[10]}
+                                colSpan={header.length}
+                                count={items.length}
+                                rowsPerPage={10}
+                                page={page}
+                                slotProps={{
+                                    select: {
+                                    inputProps: {
+                                        'aria-label': 'rows per page',
+                                    },
+                                    native: true,
+                                    },
+                                }}
+                                onPageChange={(event, newPage) => setPage(newPage)}
+                            />
+                        </TableRow>
+                    </TableFooter>
                 </Table>
             </TableContainer>            
         </Grid>

@@ -57,6 +57,22 @@ export async function POST(request) {
             maxAge: 60 * 60 * 24
         });
 
+        response.cookies.set("email", employee.email, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            path: "/",
+            maxAge: 60 * 60 * 24
+        });
+
+        response.cookies.set("user_id", employee._id.toString(), {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            path: "/",
+            maxAge: 60 * 60 * 24
+        });
+
         return response;
     } catch (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });

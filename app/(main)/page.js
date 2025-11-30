@@ -53,12 +53,13 @@ export default function Home() {
     return (
 		<Grid 
 			container
-			direction="column"
 			padding="16px 36px"
 			spacing={2}
+			justifyContent="center"
 		>
 			{/* Search bar */}
-			<Grid 
+			<Grid
+				size={{ xs:12, xl:10 }}
 				container
 				spacing={2}
 				sx={{ 

@@ -24,26 +24,44 @@ export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
-    const router = useRouter();
 
+    const router = useRouter(); 
 
-    const handleSignIn = async() => {
-        setErrorMessage("");// clear any previous errors
+  const handleSignIn = async () => {
+    setErrorMessage("");
 
-        try {
-            // Call backend login API with email + password
-            const response = await axios.post('/api/login', { email, password });
-            console.log('Login successful:', response.data);
-            router.push('/'); //to main page after login
-        } catch (error) {
-            // If login fails, set error message to display under inputs
-            const message ="Wrong email or password";
-            setErrorMessage(message);
-            console.log('Login failed:', error);
-        }
-        
+    if (!email || !password) {
+      setErrorMessage("Please enter both email and password");
+      return;
     }
 
+    try {
+      const response = await axios.post("api/login", { email, password });
+
+      router.push("/");
+    } catch (error) {
+      console.log("Login failed:", error);
+
+      let message = "Wrong email or password";
+
+      // error handling
+      if (axios.isAxiosError(error) && error.response) {
+        const { status, data } = error.response;
+        console.log("Login API error status/data:", status, data);
+
+        if (data?.error) {
+        
+          message = data.error;
+        } else if (data?.message) {
+          message = data.message;
+        } else if (status === 500) {
+          message = "Something went wrong on the server";
+        }
+      }
+
+      setErrorMessage(message);
+    }
+  };
 
     return (
         <Grid container 
@@ -106,14 +124,14 @@ export default function Login() {
                         <OutlinedInput 
                             label="Email" 
                             placeholder="you@email.com"
+                            value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            error={!!errorMessage}
                             slotProps={{
-                                input: {
-                                    startAdornment: (
-                                    <InputAdornment position="start">
-                                        <EmailOutlined sx={{ color: "divider" }} />
-                                    </InputAdornment>
+                            input: {
+                            startAdornment: (
+                            <InputAdornment position="start">
+                                <EmailOutlined sx={{ color: "divider" }} />
+                            </InputAdornment>
                                     ),
                                 },
                             }}
@@ -129,8 +147,8 @@ export default function Login() {
                             placeholder="••••"
                             error={!!errorMessage} // highlight red if error exists
                             slotProps={{
-                                input: {
-                                    startAdornment: (
+                            input: {
+                            startAdornment: (
                                     <InputAdornment position="start">
                                         <LockOutline sx={{ color: "divider" }} />
                                     </InputAdornment>

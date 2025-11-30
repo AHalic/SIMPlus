@@ -1,19 +1,32 @@
-import { InsertChartOutlined, LogoutOutlined, PeopleAltOutlined, PersonOutline } from "@mui/icons-material";
+import { AddToPhotosOutlined, InsertChartOutlined, LogoutOutlined, PeopleAltOutlined, PersonOutline } from "@mui/icons-material";
 import { Drawer, List, Typography } from "@mui/material";
 import Link from "next/link";
 import ListButton from "./ListButton";
 import BoxIcon from "./BoxIcon";
+import { getCookies, signOut } from "@/app/actions";
+import { useEffect, useState, useTransition } from "react";
 
 export default function MenuDrawer({isOpenState}) {
     const [isMenuOpen, setIsMenuOpen] = isOpenState
 
-    const closeDrawer = (event) => {
-      if ( event.type === 'keydown' &&
-        (event.key === 'Tab' || event.key === 'Shift')) {
-            return;
-      }
+    const [cookies, setCookies] = useState();
+    const [isPending, startTransition] = useTransition()
 
-      setIsMenuOpen(false)
+    useEffect(() => {
+        startTransition(async () => {
+            const cookie = await getCookies()
+            setCookies(cookie)
+        })
+    }, [])
+
+    
+    const closeDrawer = (event) => {
+        if ( event.type === 'keydown' &&
+            (event.key === 'Tab' || event.key === 'Shift')) {
+                return;
+        }
+            
+        setIsMenuOpen(false)
     };
 
     return (
@@ -59,44 +72,53 @@ export default function MenuDrawer({isOpenState}) {
                     />
                 </Link>                
 
-                <Link href="/users/new"  passHref style={{ textDecoration: 'none' }}>
-                    {/* TODO: remove after manage page is ready */}
-                    <ListButton
-                        onClick={() => setIsMenuOpen(false)}
-                        text="Add Employee"
-                        link="/users/new"
-                    />
-                </Link>
 
-                <Link href="/profile"  passHref style={{ textDecoration: 'none' }}>
+                <Link href={`/users/${cookies?.user_id}`}  passHref style={{ textDecoration: 'none' }}>
                     <ListButton
                         onClick={() => setIsMenuOpen(false)}
-                        disabled
                         text="Profile"
-                        link="/profile"
+                        link={`/users/${cookies?.user_id}`}
                         icon={<PersonOutline />}
                     />
                 </Link>
 
-                <Link href="/users"  passHref style={{ textDecoration: 'none' }}>
-                    {/* TODO: only for managers */}
-                    <ListButton
-                        disabled
-                        onClick={() => setIsMenuOpen(false)}
-                        text="Manage Employees"
-                        link="/users"
-                        icon={<PeopleAltOutlined />}
-                    />
-                </Link>
+                {cookies?.role === 'Manager' && (
+                    <>
+                        <Link href="/users" passHref style={{ textDecoration: 'none' }}>
+                            <ListButton
+                                onClick={() => setIsMenuOpen(false)}
+                                text="Manage Employees"
+                                link="/users"
+                                icon={<PeopleAltOutlined />}
+                            />
+                        </Link>
 
-                <ListButton
-                    icon={<LogoutOutlined />}
-                    text="Sign out"
-                    onClick={() => {
-                        setIsMenuOpen(false)
-                        // TODO: logout and navigate back to main page after logout
-                    }}
-                />
+                        <Link href="items/new" passHref style={{ textDecoration: 'none' }}>
+                            <ListButton
+                                onClick={() => setIsMenuOpen(false)}
+                                text="Mass Item Addition"
+                                link="/items/new"
+                                icon={<AddToPhotosOutlined />}
+                            />
+                        </Link>
+                    </>
+                )}
+
+                <form id="signout-form" action={signOut}>
+                    <ListButton
+                        icon={<LogoutOutlined />}
+                        text="Sign out"
+                        onClick={() => {
+                            setIsMenuOpen(false)
+
+                            const form = document.getElementById('signout-form')
+                            if (form) {
+                                if (typeof form.requestSubmit === 'function') form.requestSubmit()
+                                else form.submit()
+                            }
+                        }}
+                    />
+                </form>
             </List>
         </Drawer>
     )

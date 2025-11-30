@@ -3,6 +3,9 @@ import Item_Sold from "../../../../models/Item_Sold.js";
 import mongoose from "mongoose";
 import "dotenv/config";
 import * as XLSX from "xlsx";
+import nodemailer from "nodemailer";
+import { cookies } from "next/headers";
+import { PolynomialRegression } from "ml-regression-polynomial";
 
 /**
  * Report Download POST route
@@ -12,7 +15,7 @@ import * as XLSX from "xlsx";
  */
 export async function POST(request) {
     const { start_date, end_date, dept_id, period_slice, include_best_worst_seller, include_revenue,
-        include_forecast, period_forecast, send_to_email } = await request.json();
+        include_forecast, send_to_email } = await request.json();
     try {
         if (mongoose.connection.readyState === 0) {
             await mongoose.connect(process.env.MONGODB_URI, {
@@ -23,9 +26,13 @@ export async function POST(request) {
         // WORKBOOK SETUP
         const workbook = XLSX.utils.book_new();
 
+        // Data arrays for forecast
+        let X = [];
+        let Y = [];
+
         // Build match stage
         const matchStage = {
-            updatedAt: {
+            createdAt: {
                 $gte: new Date(start_date),
                 $lte: new Date(end_date)
             }
@@ -68,23 +75,25 @@ export async function POST(request) {
             let groupId = {};
             if (period_slice === "Day") {
                 groupId = {
-                    year: { $year: "$updatedAt" },
-                    month: { $month: "$updatedAt" },
-                    day: { $dayOfMonth: "$updatedAt" }
+                    year: { $year: "$createdAt" },
+                    month: { $month: "$createdAt" },
+                    week: { $week: "$createdAt" },
+                    day: { $dayOfMonth: "$createdAt" }
                 };
             } else if (period_slice === "Week") {
                 groupId = {
-                    year: { $year: "$updatedAt" },
-                    week: { $week: "$updatedAt" }
+                    year: { $year: "$createdAt" },
+                    month: { $month: "$createdAt" },
+                    week: { $week: "$createdAt" }
                 };
             } else if (period_slice === "Month") {
                 groupId = {
-                    year: { $year: "$updatedAt" },
-                    month: { $month: "$updatedAt" }
+                    year: { $year: "$createdAt" },
+                    month: { $month: "$createdAt" }
                 };
             } else if (period_slice === "Year") {
                 groupId = {
-                    year: { $year: "$updatedAt" }
+                    year: { $year: "$createdAt" }
                 };
             } else {
                 groupId = null;
@@ -115,13 +124,19 @@ export async function POST(request) {
             if (groupId) {
                 revenue_sheet = revenue.map(r => ({
                     ...r._id,
-                    total_revenue: r.total_revenue
+                    "Revenue": r.total_revenue
                 }));
             } else {
                 revenue_sheet = [{ total_revenue: revenue[0]?.total_revenue || 0 }];
             }
             const ws1 = XLSX.utils.json_to_sheet(revenue_sheet);
             XLSX.utils.book_append_sheet(workbook, ws1, "Revenue");
+
+            // Prepare data for forecast
+            if (groupId && revenue.length > 1) {
+                X = revenue.map((_, idx) => idx + 1);
+                Y = revenue.map(r => r.total_revenue);
+            }
         }
 
         // BEST SELLER BY VALUE
@@ -135,6 +150,15 @@ export async function POST(request) {
                         total_quantity: { $sum: "$amount_sold" }
                     }
                 },
+                {
+                    $lookup: {
+                        from: "Item",
+                        localField: "_id",
+                        foreignField: "_id",
+                        as: "item"
+                    }
+                },
+                { $unwind: "$item" },
                 { $sort: { total_sold_value: -1 } }
             ];
 
@@ -142,9 +166,10 @@ export async function POST(request) {
 
             // Format value for Excel sheet
             const best_seller_value_sheet = bestSellerValue.map(item => ({
-                item_id: item._id,
-                total_sold_value: item.total_sold_value,
-                total_quantity: item.total_quantity
+                "SKU": item._id.toString(),
+                "Item Name": item.item.item_name,
+                "Total Value Sold": item.total_sold_value,
+                "Total Quantity Sold": item.total_quantity
             }));
             const ws2 = XLSX.utils.json_to_sheet(best_seller_value_sheet);
             XLSX.utils.book_append_sheet(workbook, ws2, "Best Seller By Value");
@@ -161,6 +186,15 @@ export async function POST(request) {
                         total_sold_value: { $sum: { $multiply: ["$amount_sold", "$sell_price"] } }
                     }
                 },
+                {
+                    $lookup: {
+                        from: "Item",
+                        localField: "_id",
+                        foreignField: "_id",
+                        as: "item"
+                    }
+                },
+                { $unwind: "$item" },
                 { $sort: { total_quantity: -1 } }
             ];
 
@@ -168,24 +202,73 @@ export async function POST(request) {
 
             // Format quantity for Excel sheet
             const best_seller_quantity_sheet = bestSellerQuantity.map(item => ({
-                item_id: item._id,
-                total_quantity: item.total_quantity,
-                total_sold_value: item.total_sold_value
+                "SKU": item._id.toString(),
+                "Item Name": item.item.item_name,
+                "Total Quantity Sold": item.total_quantity,
+                "Total Value Sold": item.total_sold_value
             }));
             const ws3 = XLSX.utils.json_to_sheet(best_seller_quantity_sheet);
             XLSX.utils.book_append_sheet(workbook, ws3, "Best Seller By Quantity");
         }
 
         // FORECAST
-        if (include_forecast == true) {
-            let forecast_sheet = [];
+        try {
+            if (include_forecast == true) {
+                let forecast_sheet = [];
 
-            const ws4 = XLSX.utils.json_to_sheet(forecast_sheet);
-            XLSX.utils.book_append_sheet(workbook, ws4, "Forecast");
+                const regression = new PolynomialRegression(X, Y, 2);
+                const nextPeriod = X.length + 1;
+                const forecast = regression.predict(nextPeriod).toFixed(2);
+
+                forecast_sheet.push({
+                    "Period": `Next (${nextPeriod})`,
+                    "Forecasted Revenue": forecast
+                });
+
+                const ws4 = XLSX.utils.json_to_sheet(forecast_sheet);
+                XLSX.utils.book_append_sheet(workbook, ws4, "Forecast");
+            }
+        } catch (error) {
+            console.error("Error generating report:", error);
+            return NextResponse.json(
+                { error: "Not enough data to generate a forecast.", details: error.message },
+                { status: 500 }
+            );
         }
 
-
+        // Generate buffer
         const buffer = XLSX.write(workbook, { type: "buffer", bookType: "xlsx" });
+
+        // Send to email if requested
+        if (send_to_email) {
+            const now = new Date();
+            const formattedDate = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
+            const cookieStore = await cookies();
+            const receiver_email = cookieStore.get("email")?.value;
+
+            const transporter = nodemailer.createTransport({
+                service: "gmail",
+                auth: {
+                    user: process.env.EMAIL_UN, // email: sim.plus333@gmail.com
+                    pass: process.env.EMAIL_PASS, // email_pass: simplus25! app_pass: pjvh ywta wjuu omlv
+                },
+            });
+
+            await transporter.sendMail({
+                from: process.env.EMAIL_UN,
+                to: receiver_email,
+                subject: "Report for " + formattedDate,
+                text: "Attached is your report.",
+                attachments: [
+                    {
+                        filename: "Report.xlsx",
+                        content: buffer,
+                    },
+                ],
+            });
+        }
+
+        // Return Excel file as response
         return new NextResponse(buffer, {
             status: 200,
             headers: {
@@ -194,6 +277,7 @@ export async function POST(request) {
             }
         });
     } catch (error) {
+        console.error("Error generating report:", error);
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }

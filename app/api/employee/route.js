@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import mongoose from "mongoose";
 import Employee from "../../../models/Employee.js";
 import "dotenv/config";
+import { validateEmployeeData } from "./validation";
 
 
 /**
@@ -27,6 +28,14 @@ export async function POST(request) {
             { status: 400 }
         );
     }
+    //run backend validation (length, format, etc.)
+    const { valid, errors } = validateEmployeeData(data);
+    if (!valid) {
+        return NextResponse.json(
+            { error: "Validation failed", errors },
+            { status: 400 }
+        );
+        }
 
     try {
         if (mongoose.connection.readyState === 0) {
@@ -52,6 +61,49 @@ export async function POST(request) {
     } catch (error) {
         return NextResponse.json(
             { error: "Failed to create employee", details: error.message },
+            { status: 500 }
+        );
+    }
+}
+
+export async function GET(request) {
+    try {
+        if (mongoose.connection.readyState === 0) {
+            await mongoose.connect(process.env.MONGODB_URI, {
+                useNewUrlParser: true,
+                useUnifiedTopology: true,
+            });
+        }
+        const employees = await Employee.aggregate([
+                {
+                    $lookup: {
+                        from: "Department",
+                        localField: "dept_id",
+                        foreignField: "_id",
+                        as: "department_info"
+                    },
+
+                },
+                { $unwind: "$department_info" },
+                {
+                    $project: {
+                        first_name: 1,
+                        last_name: 1,
+                        email: 1,
+                        role: 1,
+                        dept_name: "$department_info.dept_name"
+                    }
+                }
+            ])
+            // .select('-password_hash');
+        
+        return NextResponse.json({employees}, {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+        });
+    } catch (error) {
+        return NextResponse.json(
+            { error: "Failed to fetch employees", details: error.message },
             { status: 500 }
         );
     }
