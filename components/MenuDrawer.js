@@ -83,20 +83,10 @@ export default function MenuDrawer({isOpenState}) {
                     />
                 </Link>
 
-                {/* TODO: remove after implementing list of users page */}
-                <Link href="/users/new"  passHref style={{ textDecoration: 'none' }}>
-                    <ListButton
-                        onClick={() => setIsMenuOpen(false)}
-                        text="Add Employee"
-                        link="/users/new"
-                    />
-                </Link>
-
                 {cookies?.role === 'Manager' && (
                     <>
-                        <Link href="/users"  passHref style={{ textDecoration: 'none' }}>
+                        <Link href="/users" passHref style={{ textDecoration: 'none' }}>
                             <ListButton
-                                disabled
                                 onClick={() => setIsMenuOpen(false)}
                                 text="Manage Employees"
                                 link="/users"

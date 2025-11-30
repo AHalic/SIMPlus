@@ -23,7 +23,8 @@ export function proxy(request) {
   }
 
   // if user is associate block access to page users/new
-  if (cookieToken && userRole === RoleEnum[1] && pathname === "/users/new") {
+  if (cookieToken && userRole === RoleEnum[1] && 
+      (pathname.startsWith("/users/") || pathname === "/items/new")) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 

@@ -1,3 +1,5 @@
+"use client";
+
 import { Chip, Grid, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TablePagination, TableRow } from "@mui/material";
 import { useState } from "react";
 
@@ -62,7 +64,7 @@ export default function TableItems({ items }) {
     )
 }
 
-export function CompleteInsertTableItems({ items }) {
+export function CompleteInsertTableItems({ items, header=[], properties=[] }) {
     const [page, setPage] = useState(0);
 
     return (
@@ -72,7 +74,7 @@ export function CompleteInsertTableItems({ items }) {
                 borderRadius: "12px",
                 border: '1px solid',
                 borderColor: 'divider',
-                padding: '18px 12px'
+                padding: '4px 12px'
             }}
         >
             <TableContainer>
@@ -86,33 +88,32 @@ export function CompleteInsertTableItems({ items }) {
                                 }, 
                             }}
                         >
-                            <TableCell> Name </TableCell>
-                            <TableCell align="right"> SKU </TableCell>
-                            <TableCell align="right"> Price </TableCell>
-                            <TableCell align="right"> Size </TableCell>
-                            <TableCell align="right"> Amount </TableCell>
-                            <TableCell align="right"> Color </TableCell>
-                            <TableCell align="right"> Type </TableCell>
-                            <TableCell align="right"> Department </TableCell>
+                            
+                            {header.map((head, index) => (
+                                <TableCell 
+                                    key={index}
+                                    align={index === 0 ? "left" : "right"}
+                                >
+                                    {head}
+                                </TableCell>
+                            ))}
                         </TableRow>
                     </TableHead>
 
 
                     <TableBody>
                         {items.slice(page * 10, page * 10 + 10)
-                            .map((it) => (
-                            <TableRow key={it.item_id}>
-                                <TableCell component="th" scope="row">
-                                    {it.name}
-                                </TableCell>
-                                <TableCell align="right"> {it.item_id} </TableCell>
-                                <TableCell align="right"> {it.cost} </TableCell>
-                                <TableCell align="right"> {it.size} </TableCell>
-                                <TableCell align="right"> {it.amount} </TableCell>
-                                <TableCell align="right"> {it.color} </TableCell>
-                                <TableCell align="right"> {it.type} </TableCell>
-                                <TableCell align="right"> {it.dept_name} </TableCell>
-                            </TableRow>
+                            .map((it, index) => (
+                                <TableRow key={index}>
+                                    {properties.map((prop, propIndex) => (
+                                        <TableCell 
+                                            align={propIndex === 0 ? "left" : "right"}
+                                            key={propIndex}
+                                        >
+                                            {it[prop]}
+                                        </TableCell>
+                                    ))}
+                                </TableRow>
                         ))}
                     </TableBody>
 
@@ -120,7 +121,7 @@ export function CompleteInsertTableItems({ items }) {
                         <TableRow align="right">
                             <TablePagination
                                 rowsPerPageOptions={[10]}
-                                colSpan={8}
+                                colSpan={header.length}
                                 count={items.length}
                                 rowsPerPage={10}
                                 page={page}

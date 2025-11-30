@@ -8,6 +8,7 @@ export default function StockListing ({ stock }) {
             {stock?.length > 0 ? 
                 stock?.map((department) => (
                     <Grid
+                        size={{ xs:12, xl:10 }}
                         key={department.dept_id}
                         container
                         spacing={2}
@@ -40,6 +41,7 @@ function NoStock () {
     return (
         <Grid
             container
+            size={{ xs:12, xl:10 }}
             spacing={2}
             direction="column"
             justifyContent="center"
@@ -57,21 +59,24 @@ function NoStock () {
     )
 }
 
-function StockListingSkeleton () {
+function StockListingSkeleton ({ showTitle = true }) {
     return (
         <Grid
             container
             spacing={2}
+            size={{ xs:12, xl:10 }}
             sx={{
-                padding: "20px",
+                padding: showTitle ? "20px" : "0px",
                 backgroundColor:"secondary.main",
                 borderRadius: "12px",
             }}
             direction="column"
         >
-            <Grid size={{ xs: 3 }}>
-                <Skeleton variant="text" sx={{ fontSize: '1.5rem' }} />
-            </Grid>
+            {showTitle && (
+                <Grid size={{ xs: 3 }}>
+                    <Skeleton variant="text" sx={{ fontSize: '1.5rem' }} />
+                </Grid>
+            )}
 
             <Grid 
                 container
