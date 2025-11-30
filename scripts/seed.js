@@ -178,7 +178,7 @@ async function seed() {
     { returned_id: null, payment_method: PaymentEnum[2] },
     { returned_id: null, payment_method: PaymentEnum[1] }
   ];
-  await Transaction.insertMany(transac4);*/
+  await Transaction.insertMany(transac4);
 
   const transactions = await Transaction.find({}, "_id");
   const ids = transactions.map(tx => tx._id);
@@ -189,7 +189,46 @@ async function seed() {
     { transaction_id: ids[23], item_id: (await Item.findOne({ item_name: "T-shirt" }))._id, amount_sold: 6, sell_price: (await Item.findOne({ item_name: "T-shirt" })).cost },
     { transaction_id: ids[23], item_id: (await Item.findOne({ item_name: "Jacket" }))._id, amount_sold: 1, sell_price: (await Item.findOne({ item_name: "Jacket" })).cost }
   ];
-  await Item_Sold.insertMany(sold4);
+  await Item_Sold.insertMany(sold4);*/
+
+  const items = await Item.find({});
+  const numTransactions = 200;
+  const startDate = new Date("2025-09-01");
+  const endDate = new Date("2025-11-29");
+
+  function randomDate(start, end) {
+    return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+  }
+
+  const transactions = [];
+  for (let i = 0; i < numTransactions; i++) {
+    transactions.push({
+      returned_id: null,
+      payment_method: PaymentEnum[Math.floor(Math.random() * PaymentEnum.length)],
+      createdAt: randomDate(startDate, endDate),
+      updatedAt: randomDate(startDate, endDate),
+    });
+  }
+  const insertedTransactions = await Transaction.insertMany(transactions);
+
+  // create Item_Sold records for each transaction
+  const sold = [];
+  for (const tx of insertedTransactions) {
+    // Each transaction can have 1-5 items sold
+    const numItems = Math.floor(Math.random() * 5) + 1;
+    for (let j = 0; j < numItems; j++) {
+      const item = items[Math.floor(Math.random() * items.length)];
+      sold.push({
+        transaction_id: tx._id,
+        item_id: item._id,
+        amount_sold: Math.floor(Math.random() * 10) + 1,
+        sell_price: item.cost,
+        createdAt: tx.createdAt,
+        updatedAt: tx.createdAt,
+      });
+    }
+  }
+  await Item_Sold.insertMany(sold);
 
   console.log("Test data inserted!");
 

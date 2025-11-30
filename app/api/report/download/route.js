@@ -5,6 +5,7 @@ import "dotenv/config";
 import * as XLSX from "xlsx";
 import nodemailer from "nodemailer";
 import { cookies } from "next/headers";
+import { PolynomialRegression } from "ml-regression-polynomial";
 
 /**
  * Report Download POST route
@@ -14,7 +15,7 @@ import { cookies } from "next/headers";
  */
 export async function POST(request) {
     const { start_date, end_date, dept_id, period_slice, include_best_worst_seller, include_revenue,
-        include_forecast, period_forecast, send_to_email } = await request.json();
+        include_forecast, send_to_email } = await request.json();
     try {
         if (mongoose.connection.readyState === 0) {
             await mongoose.connect(process.env.MONGODB_URI, {
@@ -25,9 +26,13 @@ export async function POST(request) {
         // WORKBOOK SETUP
         const workbook = XLSX.utils.book_new();
 
+        // Data arrays for forecast
+        let X = [];
+        let Y = [];
+
         // Build match stage
         const matchStage = {
-            updatedAt: {
+            createdAt: {
                 $gte: new Date(start_date),
                 $lte: new Date(end_date)
             }
@@ -70,25 +75,25 @@ export async function POST(request) {
             let groupId = {};
             if (period_slice === "Day") {
                 groupId = {
-                    year: { $year: "$updatedAt" },
-                    month: { $month: "$updatedAt" },
-                    week: { $week: "$updatedAt" },
-                    day: { $dayOfMonth: "$updatedAt" }
+                    year: { $year: "$createdAt" },
+                    month: { $month: "$createdAt" },
+                    week: { $week: "$createdAt" },
+                    day: { $dayOfMonth: "$createdAt" }
                 };
             } else if (period_slice === "Week") {
                 groupId = {
-                    year: { $year: "$updatedAt" },
-                    month: { $month: "$updatedAt" },
-                    week: { $week: "$updatedAt" }
+                    year: { $year: "$createdAt" },
+                    month: { $month: "$createdAt" },
+                    week: { $week: "$createdAt" }
                 };
             } else if (period_slice === "Month") {
                 groupId = {
-                    year: { $year: "$updatedAt" },
-                    month: { $month: "$updatedAt" }
+                    year: { $year: "$createdAt" },
+                    month: { $month: "$createdAt" }
                 };
             } else if (period_slice === "Year") {
                 groupId = {
-                    year: { $year: "$updatedAt" }
+                    year: { $year: "$createdAt" }
                 };
             } else {
                 groupId = null;
@@ -126,6 +131,12 @@ export async function POST(request) {
             }
             const ws1 = XLSX.utils.json_to_sheet(revenue_sheet);
             XLSX.utils.book_append_sheet(workbook, ws1, "Revenue");
+
+            // Prepare data for forecast
+            if (groupId && revenue.length > 1) {
+                X = revenue.map((_, idx) => idx + 1);
+                Y = revenue.map(r => r.total_revenue);
+            }
         }
 
         // BEST SELLER BY VALUE
@@ -204,6 +215,15 @@ export async function POST(request) {
         if (include_forecast == true) {
             let forecast_sheet = [];
 
+            const regression = new PolynomialRegression(X, Y, 2);
+            const nextPeriod = X.length + 1;
+            const forecast = regression.predict(nextPeriod);
+
+            forecast_sheet.push({
+                "Period": `Next (${nextPeriod})`,
+                "Forecasted Revenue": forecast
+            });
+
             const ws4 = XLSX.utils.json_to_sheet(forecast_sheet);
             XLSX.utils.book_append_sheet(workbook, ws4, "Forecast");
         }
@@ -249,6 +269,7 @@ export async function POST(request) {
             }
         });
     } catch (error) {
+        console.error("Error generating report:", error);
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
