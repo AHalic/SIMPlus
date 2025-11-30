@@ -16,15 +16,24 @@ These are the primary frameworks and libraries used to implement the project.
 - **Material UI**: v7.3.4
 - **MongoDB**: v6.20.0
 - **Mongoose**: v8.19.2
+- **ml-regression-polynomial**: ^3.0.2
+- **nodemailer**: ^7.0.10
 
+`ml-regression-polynomial` is used to forecast future revenue when requesting a report through the route `/api/report/download`
 
 ### Deployment
 The project was deployed through Vercel and can be accessed through the link [https://sim-plus.vercel.app](https://sim-plus.vercel.app).
-Pages are blocked for users not logged in, below are the credentials for a test account to log in and visualize the pages.
+Pages are blocked for users not logged in, below are the credentials for two test accounts, with different priviledges, to log in and visualize the pages.
 
 ```js
+// Associate
 email: associate@test.com
 password: passcode25$
+
+// Manager
+email: test@gmail.com
+password: testcode25!
+
 ```
 
 
