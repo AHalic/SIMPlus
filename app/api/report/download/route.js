@@ -215,20 +215,21 @@ export async function POST(request) {
         if (send_to_email) {
             const now = new Date();
             const formattedDate = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
-            const receiver_email = cookies().get("email")?.value;
+            const cookieStore = await cookies();
+            const receiver_email = cookieStore.get("email")?.value;
 
             const transporter = nodemailer.createTransport({
                 service: "gmail",
                 auth: {
-                    user: process.env.EMAIL_UN,
-                    pass: process.env.EMAIL_PASS,
+                    user: process.env.EMAIL_UN, // sim.plus333@gmail.com
+                    pass: process.env.EMAIL_PASS, // simplus25!
                 },
             });
 
             await transporter.sendMail({
                 from: process.env.EMAIL_UN,
                 to: receiver_email,
-                subject: "Report for" + formattedDate,
+                subject: "Report for " + formattedDate,
                 text: "Attached is your report.",
                 attachments: [
                     {
