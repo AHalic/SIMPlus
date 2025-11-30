@@ -221,8 +221,8 @@ export async function POST(request) {
             const transporter = nodemailer.createTransport({
                 service: "gmail",
                 auth: {
-                    user: process.env.EMAIL_UN, // sim.plus333@gmail.com
-                    pass: process.env.EMAIL_PASS, // simplus25!
+                    user: process.env.EMAIL_UN, // email: sim.plus333@gmail.com
+                    pass: process.env.EMAIL_PASS, // email_pass: simplus25! app_pass: pjvh ywta wjuu omlv
                 },
             });
 
