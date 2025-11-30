@@ -73,12 +73,11 @@ export default function MenuDrawer({isOpenState}) {
                 </Link>                
 
 
-                <Link href="/profile"  passHref style={{ textDecoration: 'none' }}>
+                <Link href={`/users/${cookies?.user_id}`}  passHref style={{ textDecoration: 'none' }}>
                     <ListButton
                         onClick={() => setIsMenuOpen(false)}
-                        disabled
                         text="Profile"
-                        link="/profile"
+                        link={`/users/${cookies?.user_id}`}
                         icon={<PersonOutline />}
                     />
                 </Link>

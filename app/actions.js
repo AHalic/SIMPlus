@@ -9,6 +9,7 @@ export async function signOut() {
     cookieStore.delete("token")
     cookieStore.delete("email")
     cookieStore.delete("role")
+    cookieStore.delete("user_id")
     
     redirect('/login')
 }
@@ -19,5 +20,6 @@ export async function getCookies() {
         token: cookieStore.get("token")?.value,
         email: cookieStore.get("email")?.value,
         role: cookieStore.get("role")?.value,
+        user_id: cookieStore.get("user_id")?.value,
     }
 }
