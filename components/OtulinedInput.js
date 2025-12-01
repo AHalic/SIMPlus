@@ -72,17 +72,24 @@ function OutlinedSelect({label, options, helperText, error, lightLabel=false, ..
 
                     '&.MuiOutlinedInput-root': {
                         '&:hover fieldset': {
-                            border: `2px solid`,
+                            border: '2px solid',
                             borderColor: 'divider'
                         },
                         '&.Mui-focused fieldset': {
-                            border: `2px solid`,
+                            border: '2px solid',
                             borderColor: 'divider'
                         },
                         '&.Mui-error fieldset': {
-                            border: `2px solid`,
+                            border: '2px solid',
                             borderColor: 'error.main'
                         },
+
+                        '&.Mui-disabled': {
+                            '&:hover fieldset': {
+                                border: '1px solid',
+                                borderColor: 'divider'
+                            },
+                        }
                     },                    
                 }}
                 IconComponent={ExpandMore}
