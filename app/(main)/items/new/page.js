@@ -194,7 +194,7 @@ export default function MassItemAddition() {
                     variant="filled"
                     sx={{ width: '100%' }}
                 >
-                    Employee created!
+                    items added successfully!
                 </Alert>
             </Snackbar>
 
