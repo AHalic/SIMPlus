@@ -382,7 +382,7 @@ export default function UserProfile({ params }) {
                     variant="filled"
                     sx={{ width: '100%' }}
                 >
-                    Employee created!
+                    {id !== 'new' ? "Employee updated!" : "Employee created!"}
                 </Alert>
             </Snackbar>
 
