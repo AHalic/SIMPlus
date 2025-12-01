@@ -1,11 +1,12 @@
 "use client";
 
+import { getCookies } from "@/app/actions";
 import { OutlinedInput, OutlinedSelect } from "@/components/OtulinedInput";
 import { RoleEnum } from "@/models/Enum.js";
-import { Alert, Button, CircularProgress, Grid, Snackbar, Typography } from "@mui/material";
+import { Alert, Button, Grid, Snackbar, Typography } from "@mui/material";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { use, useEffect, useState } from "react";
+import { use, useEffect, useState, useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 
@@ -26,6 +27,16 @@ export default function UserProfile({ params }) {
     const [isErrorSnackbarOpen, setIsErrorSnackbarOpen] = useState()
 
     const router = useRouter()
+
+    const [cookies, setCookies] = useState();
+    const [isPending, startTransition] = useTransition()
+
+    useEffect(() => {
+        startTransition(async () => {
+            const cookie = await getCookies()
+            setCookies(cookie)
+        })
+    }, [])
 
     const {
         control,
@@ -294,6 +305,7 @@ export default function UserProfile({ params }) {
                                                 lightLabel
                                                 options={departments}
                                                 variant="outlined" 
+                                                disabled={cookies?.role !== 'Manager'}
                                             />
                                         )}
                                     />
@@ -319,6 +331,7 @@ export default function UserProfile({ params }) {
                                                 lightLabel
                                                 options={RoleEnum.map((i) => ({value: i, label: i}))}
                                                 variant="outlined" 
+                                                disabled={cookies?.role !== 'Manager'}
                                             />
                                         )}
                                     />
