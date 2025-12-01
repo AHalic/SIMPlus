@@ -7,6 +7,10 @@ Group: Sophie Dilhon, Hazem Zidan, Jack Taormino, Tochukwu Okwudiri, Tony Bogonk
 Report Document Folder [link](https://drive.google.com/drive/folders/1cEoiz4s5EvmRFw47YhfBVIg-X-HxKFQt?usp=share_link)
 
 
+![demo-gif](/public/demo.gif)
+
+
+
 ### Tech Stack
 
 These are the primary frameworks and libraries used to implement the project.
