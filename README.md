@@ -6,11 +6,8 @@ Group: Sophie Dilhon, Hazem Zidan, Jack Taormino, Tochukwu Okwudiri, Tony Bogonk
 
 Report Document Folder [link](https://drive.google.com/drive/folders/1cEoiz4s5EvmRFw47YhfBVIg-X-HxKFQt?usp=share_link)
 
-
 ![demo-gif](/public/demo.gif)
 
-
-### Tech Stack
 
 ### Tech Stack
 
@@ -49,11 +46,15 @@ Make sure you have [*yarn*](https://yarnpkg.com/getting-started/install) install
 ```bash
 yarn install
 ```
-The project requires two env vars, create a file named `.env` and add the following var with your strings.
+The project requires four env vars, create a file named `.env` and add the following var with your strings.
 ```bash
 MONGODB_URI= string connection to your mongoDB databse
 JWT_SECRET= string secret
+EMAIL_UN= email string
+EMAIL_PASS= email password
 ```
+The last two are for the email responsible for sending the report through email using nodemailer.
+
 Finally run the project with:
 ```bash
 yarn run dev
